@@ -4,15 +4,22 @@ body {
 }
 
 img {
-    size: 200px 200px;
+    height: 200px;
+    width: 200px;
 }
 
-h1, h2 {
-    align-items: center;
+h1, h2, body {
+    text-align: center;
 }
 
-style {
+main {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
+    background-image: url(./images/phone_globe.jpg);
+}
+
+div {
+    border: 5px solid black;
+    display: flex;
 }
