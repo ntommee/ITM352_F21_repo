@@ -23,3 +23,7 @@ div {
     border: 5px solid black;
     display: flex;
 }
+
+h2,p span {
+    background-color: white;
+}
