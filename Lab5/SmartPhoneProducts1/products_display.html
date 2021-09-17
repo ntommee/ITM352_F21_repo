@@ -4,8 +4,6 @@
 <head>
     <script>
         var store_name = "Nicole Tommee";
-        var hits = 1;
-        spins = 10;
     </script>
 
     <link rel="stylesheet" href="./products-style.css">
@@ -17,39 +15,72 @@
 
 <body>
     <header> 
-        
         <h1>
             <script>
                 document.write(store_name);
             </script>'s
-            Used Smart Phone Store</h1>
+            Used Smart Phone Store
+        </h1>
     </header>
+
+    <p 
+        style="text-align: center; font-weight: bold;">
+        Hits:<span id="hits_span">0</span>
+        Spins:<span id="spins_span">0</span>
+     </p>
+        
     <div><main> 
-    <section class="item"onmouseover="this.className='item rotate';" onclick="this.className='item';"> 
+    <section class="item"onmouseover="this.className='item rotate'; myOverFunction();" onclick="this.className='item'; myClickFunction();"> 
         <h2><span>HTC</span></h2> 
         <p><span>&dollar;40.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/HTC.jpg">
     </section>
- <section class="item"onmouseover="this.className='item rotate';" onclick="this.className='item';"> 
+
+    <section class="item"onmouseover="this.className='item rotate'; myOverFunction();" onclick="this.className='item'; myClickFunction();"> 
         <h2><span>Apple</span></h2> 
         <p><span>&dollar;75.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/iphone-3gs.jpg">
     </section>
- <section class="item"onmouseover="this.className='item rotate';" onclick="this.className='item';"> 
+
+    <section class="item"onmouseover="this.className='item rotate'; myOverFunction();" onclick="this.className='item'; myClickFunction();"> 
         <h2><span>Nokia</span></h2> 
         <p><span>&dollar;35.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Nokia.jpg">
     </section>
- <section class="item"onmouseover="this.className='item rotate';" onclick="this.className='item';"> 
+
+    <section class="item"onmouseover="this.className='item rotate'; myOverFunction();" onclick="this.className='item'; myClickFunction();"> 
         <h2><span>Samsung</span></h2> 
         <p><span>&dollar;45.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Samsung.jpg">
     </section>
- <section class="item"onmouseover="this.className='item rotate';" onclick="this.className='item';"> 
+
+    <section class="item"onmouseover="this.className='item rotate'; myOverFunction();" onclick="this.className='item'; myClickFunction();"> 
         <h2><span>Blackberry</span></h2> 
         <p><span>&dollar;10.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg">
     </section>
+
+    <div onmouseover = "myOverFunction()">
+        <span id = "hits_span"></span>
+    </div>
+
+    <div onClick = "myClickFunction()">
+        <span id= "spins_span"></span>
+    </div>
+
+    <script>
+        var hits = 0;
+        var spins = 0;
+
+        function myClickFunction() {
+            onclick = document.getElementById("hits_span").innerHTML = hits+=1;
+        }
+
+        function myOverFunction() {
+            onmouseover = document.getElementById("spins_span").innerHTML = spins+=1;
+        }
+
+    </script>
     </main></div> 
     <footer>
         <h1>
