@@ -65,9 +65,41 @@
     </main></div> 
     <footer>
         <h1>
-            Your One Stop Phone Shop - 
             <script>
-                document.write(store_name) 
+
+                line = 1;
+                now = new Date();
+
+                document.write(` 
+                <table border="1" style="margin-left: auto; margin-right: auto; text-align: center;">
+                    <tbody>
+                        <tr>
+                            <th colspan="2">
+                                <h1>Your One Stop For Used Phones - ${first_name.charAt(0)} . ${last_name.charAt(0)}.'s</h1>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <td>${line, line++}.</td>
+                        <td>
+                            <br>
+                            Copyright @ ${first_name} ${last_name}
+                        </td>
+                        </tr>
+
+                        <tr>
+                            <td>${line, line++}.</td>
+                            <td>${now.getFullYear()}</td>
+                        </tr>
+
+                        <tr>
+                            <td>${line, line++}.</td>
+                            <td>${(now.getHours() + + 11) % 12 + 1}:${now.getMinutes()} ${(now.getHours()< 12)?'AM':'PM'} </td>
+                        </tr>
+
+                    </tbody>
+                
+                </table>`)
             </script>
         </h1>
     </footer>
