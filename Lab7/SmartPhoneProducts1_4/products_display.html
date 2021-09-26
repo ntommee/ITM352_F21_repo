@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        var first_name = "Nicole";
+        var last_name = "Tommee";
+        var over_half = false;
+    </script>
+
+    <link rel="stylesheet" href="./products-style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone Products</title>
+</head>
+
+<body>
+    <header> 
+        <h1 id="store_name_h1"> 
+        <p 
+        style="text-align: center; font-weight: bold;">
+        Hits:<span id="hits_span"> 0</span>
+        Spins:<span id="spins_span"> 0</span>
+        Hit/Spin:<span id="hit_spin_span">0</span>
+        You win:<span id="win_span">pending...</span>
+        </p>
+        <span id ='name_span' style = "font-size: 200%;">
+            <script>
+                document.write(`<b>${first_name}</b> <i>${last_name}</i>`);
+            </script>'s
+        </span><br>
+        Used Smart Phone Store </h1>
+    </header>
+        
+    <div><main> 
+    <section class="item" 
+    onmouseover = "if (this.className !='item rotate') {
+        this.className='item rotate'; 
+        spins_span.innerHTML = ++spins; }   
+    hit_spin_span.innerHTML = (hits/spins).toFixed(2); 
+    
+    hits_spins_ratio = hits/spins;
+    if ( hits_spins_ratio > 0 ) {
+        win_span.innerHTML = 'On your way!'; 
+    } if ( hits_spins_ratio >= 0.25 ) {
+        win_span.innerHTML = 'Almost there!';
+    } if ( hits_spins_ratio >= 0.5 ) {
+        if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        } 
+    } else {
+        progress = 'Get going!' ;
+    }" 
+
+
+    onclick="this.className='item'; hits_span.innerHTML = ++hits;
+    hit_spin_span.innerHTML = (hits/spins).toFixed(2); 
+    hits_spins_ratio = hits/spins;
+    if ( hits_spins_ratio > 0 ) {
+        win_span.innerHTML = 'On your way!'; 
+    } if ( hits_spins_ratio >= 0.25 ) {
+        win_span.innerHTML = 'Almost there!';
+    } if ( hits_spins_ratio >= 0.5 ) {
+        if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        } 
+    } else {
+        progress = 'Get going!' ;
+    }">
+        <h2><span>HTC</span></h2> 
+        <p><span>&dollar;40.00</span></p> 
+        <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/HTC.jpg">
+    </section>
+
+
+
+
+    <section class="item" onmouseover = "if (this.className !='item rotate') {
+        this.className='item rotate'; 
+        spins_span.innerHTML = ++spins; } hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = (spins < 2*hits && (hits < spins)); win_span.innerHTML = over_half;" onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = (spins < 2*hits && (hits < spins)); win_span.innerHTML = over_half;"> 
+        <h2><span>Apple</span></h2> 
+        <p><span>&dollar;75.00</span></p> 
+        <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/iphone-3gs.jpg">
+    </section>
+
+    <section class="item" onmouseover = "if (this.className !='item rotate') {
+        this.className='item rotate'; 
+        spins_span.innerHTML = ++spins; } hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = (spins < 2*hits && (hits < spins)); win_span.innerHTML = over_half;" onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = (spins < 2*hits && (hits < spins)); win_span.innerHTML = over_half;"> 
+        <h2><span>Nokia</span></h2> 
+        <p><span>&dollar;35.00</span></p> 
+        <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Nokia.jpg">
+    </section>
+
+    <section class="item" onmouseover = "if (this.className !='item rotate') {
+        this.className='item rotate'; 
+        spins_span.innerHTML = ++spins; } hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = (spins < 2*hits && (hits < spins)); win_span.innerHTML = over_half;" onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = (spins < 2*hits && (hits < spins)); win_span.innerHTML = over_half;"> 
+        <h2><span>Samsung</span></h2> 
+        <p><span>&dollar;45.00</span></p> 
+        <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Samsung.jpg">
+    </section>
+
+    <section class="item" onmouseover = "if (this.className !='item rotate') {
+        this.className='item rotate'; 
+        spins_span.innerHTML = ++spins; } hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = (spins < 2*hits && (hits < spins)); win_span.innerHTML = over_half;" onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = (spins < 2*hits && (hits < spins)); win_span.innerHTML = over_half;"> 
+        <h2><span>Blackberry</span></h2> 
+        <p><span>&dollar;10.00</span></p> 
+        <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg">
+    </section>
+
+    </main></div> 
+    <footer>
+        <h1>
+            <script>
+
+                line = 1;
+                now = new Date();
+
+                document.write(` 
+                <table border="1" style="margin-left: auto; margin-right: auto; text-align: center;">
+                    <tbody>
+                        <tr>
+                            <th colspan="2">
+                                <h1>Your One Stop For Used Phones - ${first_name.charAt(0)} . ${last_name.charAt(0)}.'s</h1>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <td>${line, line++}.</td>
+                        <td>
+                            <br>
+                            Copyright @ ${first_name} ${last_name}
+                        </td>
+                        </tr>
+
+                        <tr>
+                            <td>${line, line++}.</td>
+                            <td>${now.getFullYear()}</td>
+                        </tr>
+
+                        <tr>
+                            <td>${line, line++}.</td>
+                            <td>${(now.getHours() + + 11) % 12 + 1}:${now.getMinutes()} ${(now.getHours()< 12)?'AM':'PM'} </td>
+                        </tr>
+
+                    </tbody>
+                
+                </table>`)
+            </script>
+        </h1>
+    </footer>
+</body>
+
+</html>
+
+<script>
+    var hits =0;
+    var spins =0;
+    hits_span.innerHTML = hits;
+    spins_span.innerHTML = spins;
+</script>
