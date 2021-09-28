@@ -41,14 +41,14 @@
     hit_spin_span.innerHTML = (hits/spins).toFixed(2); 
     
     hits_spins_ratio = hits/spins;
-if ( hits_spins_ratio > 0 ) {
-    win_span.innerHTML = 'On your way!';
-} else if ( hits_spins_ratio >= 0.25 ) {
-    win_span.innerHTML = 'Almost there!';
-} else if ( hits_spins_ratio >= 0.5 ) {
-        if( hits < spins) { 
+if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
             win_span.innerHTML = 'You win!';
         }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
     } else {
         win_span.innerHTML = 'Get going!' ;
     }" 
@@ -63,14 +63,14 @@ if ( hits_spins_ratio > 0 ) {
     hit_spin_span.innerHTML = (hits/spins).toFixed(2); 
 
     hits_spins_ratio = hits/spins;
-    if ( hits_spins_ratio > 0 ) {
-    win_span.innerHTML = 'On your way!';
-} else if ( hits_spins_ratio >= 0.25 ) {
-    win_span.innerHTML = 'Almost there!';
-} else if ( hits_spins_ratio >= 0.5 ) {
-        if( hits < spins) { 
+    if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
             win_span.innerHTML = 'You win!';
         }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
     } else {
         win_span.innerHTML = 'Get going!' ;
     }">
@@ -85,34 +85,34 @@ if ( hits_spins_ratio > 0 ) {
     <section class="item" onmouseover = "if (this.className !='item rotate') {
         this.className='item rotate'; 
         spins_span.innerHTML = ++spins; } hit_spin_span.innerHTML = (hits/spins).toFixed(2); hits_spins_ratio = hits/spins;
-        if ( hits_spins_ratio > 0 ) {
-            win_span.innerHTML = 'On your way!';
-        } else if ( hits_spins_ratio >= 0.25 ) {
-            win_span.innerHTML = 'Almost there!';
-        } else if ( hits_spins_ratio >= 0.5 ) {
-            if( hits < spins) { 
-                win_span.innerHTML = 'You win!';
-            }
-        } else {
-        win_span.innerHTML = 'Get going!' ;
+        if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
         }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
+    } else {
+        win_span.innerHTML = 'Get going!' ;
+    }
     " onclick="if (this.className !='item rotate') {
         this.className= 'item';
     } else {
         this.className='item';
         hits_span.innerHTML = ++hits;
     } hit_spin_span.innerHTML = (hits/spins).toFixed(2); hits_spins_ratio = hits/spins;
-    if ( hits_spins_ratio > 0 ) {
-            win_span.innerHTML = 'On your way!';
-        } else if ( hits_spins_ratio >= 0.25 ) {
-            win_span.innerHTML = 'Almost there!';
-        } else if ( hits_spins_ratio >= 0.5 ) {
-            if( hits < spins) { 
-                win_span.innerHTML = 'You win!';
-            }
-        } else {
+    if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
+    } else {
         win_span.innerHTML = 'Get going!' ;
-        }"> 
+    }"> 
         <h2><span>Apple</span></h2> 
         <p><span>&dollar;75.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/iphone-3gs.jpg">
@@ -121,33 +121,33 @@ if ( hits_spins_ratio > 0 ) {
     <section class="item" onmouseover = "if (this.className !='item rotate') {
         this.className='item rotate'; 
         spins_span.innerHTML = ++spins; } hit_spin_span.innerHTML = (hits/spins).toFixed(2); hits_spins_ratio = hits/spins;
-        if ( hits_spins_ratio > 0 ) {
-            win_span.innerHTML = 'On your way!';
-        } else if ( hits_spins_ratio >= 0.25 ) {
-            win_span.innerHTML = 'Almost there!';
-        } else if ( hits_spins_ratio >= 0.5 ) {
-            if( hits < spins) { 
-                win_span.innerHTML = 'You win!';
-            }
-        } else {
+        if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
+    } else {
         win_span.innerHTML = 'Get going!' ;
-        }" onclick="if (this.className !='item rotate') {
+    }" onclick="if (this.className !='item rotate') {
         this.className= 'item';
     } else {
         this.className='item';
         hits_span.innerHTML = ++hits;
     } hit_spin_span.innerHTML = (hits/spins).toFixed(2); hits_spins_ratio = hits/spins;
-    if ( hits_spins_ratio > 0 ) {
-            win_span.innerHTML = 'On your way!';
-        } else if ( hits_spins_ratio >= 0.25 ) {
-            win_span.innerHTML = 'Almost there!';
-        } else if ( hits_spins_ratio >= 0.5 ) {
-            if( hits < spins) { 
-                win_span.innerHTML = 'You win!';
-            }
-        } else {
+    if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
+    } else {
         win_span.innerHTML = 'Get going!' ;
-        }"> 
+    }"> 
         <h2><span>Nokia</span></h2> 
         <p><span>&dollar;35.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Nokia.jpg">
@@ -156,33 +156,33 @@ if ( hits_spins_ratio > 0 ) {
     <section class="item" onmouseover = "if (this.className !='item rotate') {
         this.className='item rotate'; 
         spins_span.innerHTML = ++spins; } hit_spin_span.innerHTML = (hits/spins).toFixed(2); hits_spins_ratio = hits/spins;
-        if ( hits_spins_ratio > 0 ) {
-            win_span.innerHTML = 'On your way!';
-        } else if ( hits_spins_ratio >= 0.25 ) {
-            win_span.innerHTML = 'Almost there!';
-        } else if ( hits_spins_ratio >= 0.5 ) {
-            if( hits < spins) { 
-                win_span.innerHTML = 'You win!';
-            }
-        } else {
+        if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
+    } else {
         win_span.innerHTML = 'Get going!' ;
-        }" onclick="if (this.className !='item rotate') {
+    }" onclick="if (this.className !='item rotate') {
         this.className= 'item';
     } else {
         this.className='item';
         hits_span.innerHTML = ++hits;
     } hit_spin_span.innerHTML = (hits/spins).toFixed(2); hits_spins_ratio = hits/spins;
-    if ( hits_spins_ratio > 0 ) {
-            win_span.innerHTML = 'On your way!';
-        } else if ( hits_spins_ratio >= 0.25 ) {
-            win_span.innerHTML = 'Almost there!';
-        } else if ( hits_spins_ratio >= 0.5 ) {
-            if( hits < spins) { 
-                win_span.innerHTML = 'You win!';
-            }
-        } else {
+    if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
+    } else {
         win_span.innerHTML = 'Get going!' ;
-        }"> 
+    }"> 
         <h2><span>Samsung</span></h2> 
         <p><span>&dollar;45.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Samsung.jpg">
@@ -192,17 +192,17 @@ if ( hits_spins_ratio > 0 ) {
         this.className='item rotate'; 
         spins_span.innerHTML = ++spins; } hit_spin_span.innerHTML = (hits/spins).toFixed(2); hits_spins_ratio = hits/spins;
         hits_spins_ratio = hits/spins;
-        if ( hits_spins_ratio > 0 ) {
-            win_span.innerHTML = 'On your way!';
-        } else if ( hits_spins_ratio >= 0.25 ) {
-            win_span.innerHTML = 'Almost there!';
-        } else if ( hits_spins_ratio >= 0.5 ) {
-            if( hits < spins) { 
-                win_span.innerHTML = 'You win!';
-            }
-        } else {
+        if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
+    } else {
         win_span.innerHTML = 'Get going!' ;
-        }" onclick="if (this.className !='item rotate') {
+    }" onclick="if (this.className !='item rotate') {
             this.className= 'item';
         } else {
             this.className='item';
@@ -210,17 +210,17 @@ if ( hits_spins_ratio > 0 ) {
         } hit_spin_span.innerHTML = (hits/spins).toFixed(2); hits_spins_ratio = hits/spins;
 
 
-        if ( hits_spins_ratio > 0 ) {
-            win_span.innerHTML = 'On your way!';
-        } else if ( hits_spins_ratio >= 0.25 ) {
-            win_span.innerHTML = 'Almost there!';
-        } else if ( hits_spins_ratio >= 0.5 ) {
-            if( hits < spins) { 
-                win_span.innerHTML = 'You win!';
-            }
-        } else {
+        if ( hits_spins_ratio >= 0.5) {
+    if( hits < spins) { 
+            win_span.innerHTML = 'You win!';
+        }
+} else if ( hits_spins_ratio >= 0.25 ) {
+    win_span.innerHTML = 'Almost there!';
+} else if ( hits_spins_ratio > 0  ) {
+    win_span.innerHTML = 'On your way!';
+    } else {
         win_span.innerHTML = 'Get going!' ;
-        }"> 
+    }"> 
         <h2><span>Blackberry</span></h2> 
         <p><span>&dollar;10.00</span></p> 
         <img src = "http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg">
