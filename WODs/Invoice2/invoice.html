@@ -43,8 +43,20 @@
     var tax_rate = 0.0575;
     var tax = tax_rate * subtotal;
 
+    // Compute Shipping Cost
+    var shipping;
+
+    if (subtotal <= 50) {
+      shipping = 2;
+    } else if (subtotal <= 100) {
+      shipping = 5;
+    } else {
+      shipping = 0.05 * subtotal;
+    }
+
+
     // Compute grand total
-    var total = subtotal + tax;
+    var total = subtotal + tax + shipping;
 
 </script>
 
@@ -125,10 +137,21 @@
             <td width="54%">$<script>document.write(tax.toFixed(2));</script></td>
           </tr>
           <tr>
+            <td style="text-align: center;" colspan="3" width="67%"><span style="font-family: arial;">Shipping</td>
+            <td width="54%">$<script>document.write(shipping.toFixed(2));</script></td>
+          </tr>
+          <tr>
             <td style="text-align: center;" colspan="3" width="67%"><strong>Total</strong></td>
             <td width="54%"><strong>$<script>document.write(total.toFixed(2));</script></strong></td>
           </tr>
         </tbody>
       </table>
+
+      <div> <b> <br>
+        OUR SHIPPING POLICY IS:A subtotal $0 - $49.99 will be $2 shipping
+A subtotal $50 - $99.99 will be $5 shipping
+Subtotals over $100 will be charged 5% of the subtotal amount 
+      </b>
+      </div>
 </body>
 </html>
