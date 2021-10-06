@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src = "./products_data.js"></script>
+
+    <link rel="stylesheet" href="./products-style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone Products</title>
+</head>
+<body>
+    <h1>Used Smart Phone Store</h1>
+    <div><main> 
+    <script>
+        num_products = 5;
+        for(i = 1; i<=num_products; i++){
+            document.write(`
+            <section class="item"> 
+            <h2>${eval('name' + i)}</h2> 
+            <p><span>$${eval('price' + i)}</span></p> 
+            <img src="${eval('image' + i)}">
+            </section>
+            `);
+    }
+    </script>
+    
+
+    </main></div> 
+    <footer>
+        <h1>Your One Stop Phone Shop</h1>
+    </footer>
+</body>
+</html>
