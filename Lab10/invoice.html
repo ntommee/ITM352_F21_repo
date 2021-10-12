@@ -1,0 +1,147 @@
+<script>
+    /* Creates and displays a sale receipt for products sold
+    */
+
+    // Product Data
+
+    var product1 = {
+      item: "Dark Spot Toner",
+      quantity: 2,
+      price: 3.19
+    };
+
+    product1.quantity = 0;
+    product1.SKU = 1234;
+    delete product1.SKU;
+
+    var product_quantities = [2,1,3,8,2];
+
+
+    // Product 1
+    var item1 = 'Dark Spot Toner';
+    var quantity1 = 2;
+    var price1 = 3.19;
+
+    // Product 2
+    var item2 = 'Cold Plunge Moisturizer';
+    var quantity2 = 1;
+    var price2 = 9.28;
+
+    // Product 3
+    var item3 = 'Vitamin C Serum';
+    var quantity3 = 3;
+    var price3 = 4.78;
+
+    // Product 4
+    var item4 = 'Hydrating Primer';
+    var quantity4 = 8;
+    var price4 = 2.77;
+
+    // Product 5
+    var item5 = 'Mineral Sunscreen';
+    var quantity5 = 2;
+    var price5 = 10.99;
+
+    // Compute extended prices
+    var extended_price1 = product1.quantity * product1.price;
+    var extended_price2 = quantity2 * price2;
+    var extended_price3 = quantity3 * price3;
+    var extended_price4 = quantity4 * price4;
+    var extended_price5 = quantity5 * price5;
+
+    // Compute overall subtotal
+    var subtotal = extended_price1 + extended_price2 + extended_price3 + extended_price4 + extended_price5;
+
+    // Compute sales tax
+    var tax_rate = 0.0575;
+    var tax = tax_rate * subtotal;
+
+    // Compute grand total
+    var total = subtotal + tax;
+
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table border="2">
+        <tbody>
+            <tr>
+            <th style="text-align: center;" width="43%">Item</th>
+            <th style="text-align: center;" width="11%">quantity</th>
+            <th style="text-align: center;" width="13%">price</th>
+            <th style="text-align: center;" width="54%">extended price</th>
+          </tr>  
+           
+          <script>
+            //product row 1
+            document.write(`
+            <tr>
+                <td width="43%">${product1.item}</td>
+                <td align="center" width="11%">${product1.quantity}</td>
+                <td width="13%">\$${product1.price}</td>
+                <td width="54%">\$${extended_price1}</td>
+            </tr>`)
+
+            //product row 2
+            document.write(`
+            <tr>
+                <td width="43%">${item2}</td>
+                <td align="center" width="11%">${quantity2}</td>
+                <td width="13%">\$${price2}</td>
+                <td width="54%">\$${extended_price2}</td>
+            </tr> `)
+
+            //product row 3
+            document.write(`
+            <tr>
+                <td width="43%">${item3}</td>
+                <td align="center" width="11%">${quantity3}</td>
+                <td width="13%">\$${price3}</td>
+                <td width="54%">\$${extended_price3}</td>
+            </tr> `)
+
+            //product row 4
+            document.write(`
+            <tr>
+                <td width="43%">${item4}</td>
+                <td align="center" width="11%">${quantity4}</td>
+                <td width="13%">\$${price4}</td>
+                <td width="54%">\$${extended_price4}</td>
+            </tr>`)
+
+            //product row 5 
+            document.write(`
+            <tr>
+                <td width="43%">${item5}</td>
+                <td align="center" width="11%">${quantity5}</td>
+                <td width="13%">\$${price5}</td>
+                <td width="54%">\$${extended_price5}</td>
+            </tr> `)
+            
+          </script> 
+          <tr>
+            <td colspan="4" width="100%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="text-align: center;" colspan="3" width="67%">Sub-total</td>
+            <td width="54%">$<script>document.write(subtotal.toFixed(2));</script></td>
+          </tr>
+          <tr>
+            <td style="text-align: center;" colspan="3" width="67%"><span style="font-family: arial;">Tax @ <script>document.write(tax_rate*100);</script>%</span></td>
+            <td width="54%">$<script>document.write(tax.toFixed(2));</script></td>
+          </tr>
+          <tr>
+            <td style="text-align: center;" colspan="3" width="67%"><strong>Total</strong></td>
+            <td width="54%"><strong>$<script>document.write(total.toFixed(2));</script></strong></td>
+          </tr>
+        </tbody>
+      </table>
+</body>
+</html>
