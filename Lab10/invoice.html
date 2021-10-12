@@ -7,6 +7,8 @@
     product_quantities.push = 5;
     delete product_quantities[5];
 
+    
+
     // array of all products
     // corresponds to product_quantities array
     // product_quantities[i] is the quantity for products[i]
@@ -18,20 +20,28 @@
     { 'name': 'Mineral Sunscreen', 'price': 10.99 }
     ];
 
+    // Compute extended prices
+    var extended_price1 = product_quantities[0] * products[0].price;
+    var extended_price2 = product_quantities[1] * products[1].price;
+    var extended_price3 = product_quantities[2] * products[2].price;
+    var extended_price4 = product_quantities[3] * products[3].price;
+    var extended_price5 = product_quantities[4] * products[4].price;
 
     document.write(`
-    <table style="border: 1px solid black;text-align: center;">
-    <tbody><tr style="border: 1px solid black;"><th style="border: 1px solid black;">Product Name</th>
-    <th>Price</th>    
-    </tr
+    <table border="2">
+      <tbody>
+            <tr>
+            <th style="text-align: center;" width="43%">Name</th>
+            <th style="text-align: center;" width="13%">Price</th>
+            <th style="text-align: center;" width="54%">Extended Price</th>
+          </tr>
     `)
 
-    for(let prodObj of products) {
+    for(let i = 0; i<products.length; i++) {
       document.write(`
-      <tr style="border: 1px solid black;"><td style="border: 1px solid black;">${prodObj.name}</td>
-      <td>${prodObj.price}</td>
-
-      
+      <tr style="border: 1px solid black;"><td style="border: 1px solid black;">${products[i].name}</td>
+      <td>$${products[i].price}</td>
+      <td>$${eval('extended_price' + (i+1))}</td>
       </tr>
       `);
     }
@@ -47,7 +57,7 @@
 
     /*change product1 quantity to 0
     product1.quantity = 0;
-    */
+    
 
     product1 ["SKU#"] = 1234;
     delete product1["SKU#"];
@@ -70,12 +80,8 @@
     var item5 = 'Mineral Sunscreen';
     var price5 = 10.99;
 
-    // Compute extended prices
-    var extended_price1 = product_quantities[0] * product1.price;
-    var extended_price2 = product_quantities[1] * price2;
-    var extended_price3 = product_quantities[2] * price3;
-    var extended_price4 = product_quantities[3] * price4;
-    var extended_price5 = product_quantities[4] * price5;
+    */
+
 
     // Compute overall subtotal
     var subtotal = extended_price1 + extended_price2 + extended_price3 + extended_price4 + extended_price5;
