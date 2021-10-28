@@ -12,6 +12,4 @@ step8 = step7;
 step9 = step8 - 1; // not a leap year
 step10 = step9 % 7;
 
-
-
 console.log(step10);
