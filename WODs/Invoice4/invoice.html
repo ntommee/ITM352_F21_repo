@@ -2,19 +2,23 @@
   // Creates and displays a sale receipt for products sold
 </script>
 <script>
-  var quantities = [1.2, -1, 3, 0, 5];
+  var quantities = [1.2, -1, "test", 0, 5];
 
   function generate_item_rows(product_quantities_array) {
     //product rows
     for (i = 0; products.length; i++) {
       if (product_quantities_array[i] == 0) continue;
       errors = isNonNegInt(product_quantities_array[i], true);
+      if (errors.length == 0) {
       extended_price = products[i].price * product_quantities_array[i];
       subtotal = subtotal + extended_price;
+      } else {
+        extended_price = "";
+      }
       document.write(`
               <tr>
                   <td width="43%">${products[i].name}</td>
-                  <td align="center" width="11%">${product_quantities_array[i]}<br>${errors}</td>
+                  <td align="center" width="11%">${product_quantities_array[i]}<br><font color = "red">${errors.join('<br>')}</font></td>
                   <td width="13%">\$${products[i].price}</td>
                   <td width="54%">\$${extended_price}</td>
               </tr>`)
@@ -24,7 +28,7 @@
     // Otherwise returns true if q is a non-negative integer. 
     function isNonNegInt(q, returnErrors = false) {
       errors = []; // assume no errors at first
-      if (q = '') {
+      if (q == '') {
         q = 0;
       }
       if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
