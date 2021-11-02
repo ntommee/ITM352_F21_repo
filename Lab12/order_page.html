@@ -9,9 +9,13 @@
 </head>
 
 <body>
+    <form name="quantity_form" action="display_purchase.html" method="GET"> 
     <label> Quantity Desired:</label>
-    <input id="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(this);">
+    <input name="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(this);">
     <span id='qty_textbox_message'> Enter a quantity</span>
+    <br>
+    <input type="submit" value="Purchase">
+</form>
 </body>
 
 </html>
@@ -33,5 +37,15 @@
         }
 
         return returnErrors ? errors : (errors.length == 0);
+    }
+
+    function displayPurchase() {
+        var qty = quantity_textbox.value;
+        var err = isNonNegInt(qty, true);
+        if (err.length == 0) {
+             document.write(`Thank for you for ordering ${qty} things!`);
+        } else {
+            qty_textbox_message.innerHTML = `<font color="red"> ${err + ' ' + ('Please enter a valid quantity!')} </font>`
+        }
     }
 </script>
