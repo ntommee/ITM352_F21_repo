@@ -45,7 +45,7 @@
         if (err.length == 0) {
              document.write(`Thank for you for ordering ${qty} things!`);
         } else {
-            qty_textbox_message.innerHTML = `<font color="red"> ${err + ' ' + ('Please enter a valid quantity!')} </font>`
+            qty_textbox_message.innerHTML = `<font color="red"> ${err.join(' ')('Please enter a valid quantity!')} </font>`
         }
     }
 </script>
