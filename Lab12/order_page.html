@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+    <script>
+        let params = (new URL(document.location)).searchParams;
+    </script>
 
 <head>
     <meta charset="UTF-8">
@@ -9,16 +12,17 @@
 </head>
 
 <body>
-    <form name="quantity_form" action="display_purchase.html" method="GET"> 
-    <label> Quantity Desired:</label>
-    <input name="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(this);">
-    <span id='qty_textbox_message'> Enter a quantity</span>
-    <br>
-    <input type="submit" value="Purchase">
-</form>
+    <form name="quantity_form" action="" method="GET">
+        <label> Quantity Desired:</label>
+        <input name="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(this);">
+        <span id='qty_textbox_message'> Enter a quantity</span>
+        <br>
+        <input type="submit" value="Purchase">
+    </form>
 </body>
 
 </html>
+
 
 <script>
     function checkQuantityTextbox(theTextbox) {
@@ -43,9 +47,20 @@
         var qty = quantity_textbox.value;
         var err = isNonNegInt(qty, true);
         if (err.length == 0) {
-             document.getElementsByTagName('body')[0].innerHTML = `Thank for you for ordering ${qty} things!`;
+            document.getElementsByTagName('body')[0].innerHTML = `Thank for you for ordering ${qty} things!`;
         } else {
             qty_textbox_message.innerHTML = `<font color="red"> ${err.join(' ')}'Please enter a valid quantity!' </font>`
+        }
+    }
+</script>
+
+<script>
+    // making the form box sticky
+    if (params.has('quantity_textbox')) {
+        quantity_form["quantity_textbox"].value = params.get('quantity_textbox');
+        checkQuantityTextbox(quantity_form["quantity_textbox"]);
+        if (params.get('quantity_textbox') > 0) {
+            document.body.innerHTML = (`Thank you for ordering ${params.get('quantity_textbox')} things!`)
         }
     }
 </script>
