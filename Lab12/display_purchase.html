@@ -1,11 +1,23 @@
 <script>
     let params = (new URL(document.location)).searchParams;
+    console.log(params);
+
     if (params.has('quantity_textbox') && params.get('quantity_textbox') > 0) {
         document.write(`Thank you for ordering ${params.get('quantity_textbox')} things!`)
     } else {
         document.write ("You need to purchase some items!")
-
-        //history.back();
     }
-    console.log(params);
+
+    function isNonNegInt(q, returnErrors = true) {
+        errors = []; // assume no errors at first
+        if (q == '') q = 0;
+        if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
+        else {
+            if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
+            if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
+        }
+
+        return returnErrors ? errors : (errors.length == 0);
+    }
+    params.get;
 </script>
