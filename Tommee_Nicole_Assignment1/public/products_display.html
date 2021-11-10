@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="./product_data.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="./products-style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Kitty Squishmallows</title>
+</head>
+
+<body>
+    <h1>Hello Kitty Squishmallow Store</h1>
+    <div>
+        <form action="./invoice.html" method = "GET">
+        <main>
+            <script>
+                for (i = 0; i < products.length; i++) {
+                    document.write(`
+            <section class="item"> 
+            <h2>${products[i].name}</h2> 
+            <p><span>$${products[i].price}</span></p> 
+            <p><span>Quantity Available: ${products[i].quantity_available}</span></p> 
+            <input type = "text" placeholder = "0" name="quantity${i}">
+            <img src="./images/${products[i].image}">
+            </section>
+            `);
+                }
+            </script>
+        </main>
+        <input type="submit" value="Purchase">
+    </form>
+    </div>
+    <footer>
+        <h1>For All Your Hello Kitty Needs</h1>
+    </footer>
+</body>
+
+</html>
