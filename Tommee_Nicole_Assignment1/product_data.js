@@ -15,7 +15,7 @@ var products =
         {
             "name": "Squishmallows Hello Kitty Scuba",
             "price": 35.00,
-            "image": "hk4,jpeg",
+            "image": "hk4.jpeg",
             "quantity_available": 4
         },
         {
