@@ -12,12 +12,12 @@
 </head>
 
 <body>
-    <form name="quantity_form" action="" method="GET">
+    <form name="quantity_form" action="./process_form" method="POST">
         <label> Quantity Desired:</label>
         <input name="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(this);">
         <span id='qty_textbox_message'> Enter a quantity</span>
         <br>
-        <input type="submit" value="Purchase">
+        <input name = "purchase_submit_buttom" type="submit" value="Purchase">
     </form>
 </body>
 
