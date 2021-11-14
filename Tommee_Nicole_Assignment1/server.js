@@ -1,4 +1,4 @@
-var products_array = require('./product_data.json');
+var products_array = require('./product_data.js');
 
 var express = require('express');
 var app = express();
