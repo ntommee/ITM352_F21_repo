@@ -2,22 +2,40 @@ const { response, request } = require('express');
 var express = require('express');
 var app = express();
 
-app.use(express.urlencoded({ extended: true }));
-
 app.all('*', function (request, response, next) {
     console.log(request.method + 'to path' + request.path + 'query string' + JSON.stringify(request.query));
     next();
 });
 
+app.use(express.urlencoded({ extended: true }));
+
+var products = require('./product_data.json');
+products.forEach( (prod,i) => {prod.total_sold = 0});
+
+app.get("/product_data.js", function (request, response, next) {
+    response.type('.js');
+    var products_str = `var products = ${JSON.stringify(products)};`;
+    response.send(products_str);
+});
+
+
+
 app.post('/process_form', function (request, response, next) {
+    let brand = products[0]['brand'];
+    let brand_price = products[0]['price'];
+
     var q = request.body['quantity_textbox'];
     if (typeof q != 'undefined') {
-        if(isNonNegInt(q)){
-                    response.send(`Thank you for purchasing ${q} things!`);
+        if (isNonNegInt(q)) {
+            products[0].total_sold += Number(q);
+            response.send(`<h2>Thank you for purchasing ${q} ${brand}. Your total is \$${q * brand_price}!</h2>`);
         } else {
             response.send(`Error: ${q} is not a quantity. Hit the back button to fix..`)
-        } 
+        }
+    } else {
+        response.send(`Hey! You need to pick some stuff!`);
     }
+    next();
 });
 
 app.use(express.static('./public')); // essentially replaces http-server
