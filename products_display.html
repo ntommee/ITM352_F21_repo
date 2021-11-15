@@ -1,0 +1,74 @@
+<script src="./product_data.js" type="text/javascript"></script>
+<script>
+    function isNonNegInt(q, returnErrors = false) {
+        errors = []; // assume no errors at first
+        if (q == '') q = 0;
+        if (Number(q) != q) errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
+        else {
+            if (q < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
+            if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
+        }
+        return returnErrors ? errors : (errors.length == 0);
+    }
+    // modified code from Lab12 
+    function checkQuantityTextbox(theTextbox) {
+        // is the textbox value a non-negative int?
+        var errors_array = isNonNegInt(theTextbox.value, true);
+        // once the user types something in the box and it has no errors, change the message to quantity requested
+        if (errors_array.length == 0) errors_array = ['Quantity Requested:'];
+        // if nothing in box tell user to enter a quantity
+        if (theTextbox.value.trim() == '') errors_array = ['Enter a quantity'];
+        // if there are errors, display all the errors 
+        document.getElementById(theTextbox.name + '_label').innerHTML = errors_array.join(", ");
+    }
+
+    // check to see make sure the user doesn't request more than what is available
+    function checkQuantityRequested(theTextbox) {
+        // if quantity requested > quantity available
+        // Display error message
+    }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="./products-style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Kitty Squishmallows</title>
+</head>
+
+<body>
+    <h1>Nicole's Hello Kitty Squishmallow Store</h1>
+    <div>
+        <form action="/process_form" method="POST">
+            <main>
+                <script>
+                    // displays the product listings with name, price, quantity available, and image 
+                    for (i = 0; i < products.length; i++) {
+                        document.write(`
+            <section class="item"> 
+            <h2>${products[i].name}</h2> 
+            <p><span>$${products[i].price}</span></p> 
+            <p><span>Quantity Available: ${products[i].quantity_available}</span></p> 
+            <label id="quantity${i}_label"}"> Enter a quantity</label> 
+            <input type = "text" placeholder = "0" name="quantity${i}" onkeyup = "checkQuantityTextbox(this);">
+            <img src="./images/${products[i].image}">
+            </section>
+            `);
+                    }
+                </script>
+            </main>
+            <br>
+            <!--submit button that shows "purchase"-->
+            <input type="submit" value="Purchase">
+        </form>
+    </div>
+    <footer>
+        <h1>For All Your Hello Kitty Needs</h1>
+    </footer>
+</body>
+
+</html>

@@ -1,4 +1,7 @@
-// Outline from Lab13 Ex4
+/* 
+* Nicole Tommee
+* Displays product data, validates the input, and presents an invoice 
+*/
 
 var express = require('express');
 var app = express();
@@ -8,8 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // takes product information from json and stores in var products
 var products = require('./products.json');
-
-// keep track of quantity sold
+// keep track of quantity sold 
 products.forEach((prod, i) => { prod.total_sold = 0 });
 
 // monitor all requests
@@ -66,6 +68,3 @@ function isNonNegInt(q, returnErrors = false) {
     }
     return returnErrors ? errors : (errors.length == 0);
 }
-
-
-
