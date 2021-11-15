@@ -30,6 +30,12 @@ div {
     display: flex;
 }
 
+section {
+    outline: 0.5px solid palevioletred;
+    display: inline-block;
+    width: 50%;
+}
+
 h2,p span {
     background-color: white;
 }

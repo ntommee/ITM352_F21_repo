@@ -6,6 +6,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // takes product information from json and stores in var products
 var products = require('./products.json');
+
+// keep track of quantity sold
 products.forEach((prod, i) => { prod.total_sold = 0 });
 
 // monitor all requests
@@ -20,19 +22,6 @@ app.get("/product_data.js", function (request, response, next) {
     var products_str = `var products = ${JSON.stringify(products)};`;
     response.send(products_str);
 });
-
-function isNonNegInt(q, returnErrors = false) {
-    errors = []; // assume no errors at first
-    if (q == '') q = 0;
-    if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
-    else {
-        if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
-        if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
-    }
-    return returnErrors ? errors : (errors.length == 0);
-}
-
-
 
 /*app.post("/process_form", function (request, response) {
     response.send(request.body);
@@ -64,4 +53,17 @@ app.use(express.static('./public')); // essentially replaces http-server
 
 // start server
 app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
+
+function isNonNegInt(q, returnErrors = false) {
+    errors = []; // assume no errors at first
+    if (q == '') q = 0;
+    if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
+    else {
+        if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
+        if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
+    }
+    return returnErrors ? errors : (errors.length == 0);
+}
+
+
 
