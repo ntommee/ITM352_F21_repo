@@ -1,4 +1,3 @@
-var products =
     [
         {
             "name": "Squishmallows Hello Kitty Red",
@@ -30,8 +29,4 @@ var products =
             "image": "hk5.jpeg",
             "quantity_available": 2
         }
-    ];
-
-if (typeof module != 'undefined') {
-    module.exports.products = products;
-}
+    ]
