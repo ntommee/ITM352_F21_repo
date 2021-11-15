@@ -71,7 +71,7 @@
     <!-- displays the product listings with image, name, price, and quantity available -->
     <!-- also displays text box for user to enter quantity & checks input -->
     <div class="w3-row-padding w3-padding-16 w3-center">
-      <form action="/process_form" method="POST">
+      <form action="/process_form" name="product_selection_form" method="POST">
         <main>
           <script>
             for (i = 0; i < products.length; i++) {
@@ -91,7 +91,8 @@
     <!--submit button that shows "purchase"-->
     <br>
     <br>
-    <input type="submit" value="Purchase" style="margin:0px auto; display:block; background-color: palevioletred;">
+    <input type="submit" value="Purchase" name="purchase_submit" 
+    style="margin:0px auto; display:block; background-color: palevioletred;">
     </form>
 
     <!-- Footer -->
