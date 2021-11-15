@@ -1,6 +1,10 @@
 var express = require('express');
 var app = express();
 
+// get the body
+app.use(express.urlencoded({ extended: true }));
+
+// takes product information from json and stores in var products
 var products = require('./products.json');
 products.forEach((prod, i) => { prod.total_sold = 0 });
 
@@ -28,8 +32,7 @@ function isNonNegInt(q, returnErrors = false) {
     return returnErrors ? errors : (errors.length == 0);
 }
 
-// get the body
-app.use(express.urlencoded({ extended: true }));
+
 
 /*app.post("/process_form", function (request, response) {
     response.send(request.body);
@@ -52,6 +55,7 @@ app.post('/process_form', function (request, response, next) {
         } else {
             response.send(`Hey! You need to pick some stuff!`)
         };
+        next();
     }
 });
 
