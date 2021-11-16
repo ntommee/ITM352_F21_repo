@@ -3,6 +3,16 @@
 <script src="./product_data.js" type="text/javascript"></script>
 
 <script>
+  let params = (new URL(document.location)).searchParams;
+  window.onload = () => {
+    if ((params.has('error'))) {
+      for (i in products) {
+        // put quantity values from qstring into quantity textboxes
+        product_selection_form[`quantity${i}`].value = params.get(`quantity${i}`);
+      }
+    }
+  }
+
   function isNonNegInt(q, returnErrors = false) {
     errors = []; // assume no errors at first
     if (q == '') q = 0;

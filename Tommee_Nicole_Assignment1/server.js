@@ -6,8 +6,8 @@
 
 var express = require('express');
 var app = express();
-var myParser = require("body-parser");
 var fs = require('fs');
+const qs = require('querystring');
 
 // get the body
 app.use(express.urlencoded({ extended: true }));
@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 // takes product information from json and stores in var products
 var products = require('./products.json');
 // keep track of quantity sold 
-products.forEach((prod, i) => { prod.total_sold = 0 });
+products.forEach((prod, i) => { prod.total_avail = 0 });
 
 // monitor all requests
 app.all('*', function (request, response, next) {
@@ -38,45 +38,42 @@ app.post("/process_form", function (request, response, next) {
         response.send("Please purchase some items first!");
         console.log('No purchase form data');
         next();
+        return;
     }
 
-    // Off-nominal case #1: If user submits an invalid quantitiy, 
+    // Validations - assume no errors to start
+    var has_errors = false;
+    var empty = true; // assume no quantities
+    // Off-nominal case #1: If user submits an invalid quantitiy, make has_errors true
     for (i = 0; i < products.length; i++) {
         if (!(isNonNegInt(POST[`quantity${i}`]))) {
-            response.redirect('./products_display.html') //go back to the order page
-            console.log("Non negative int value inputted.")
-            return next();
-            // Display message on page explaining the error
+           console.log("Non negative int value inputted.")
+           has_errors = true;
+           break;
+        }
+        // Off-nominal case #2: if no quantities are selected, empty is true
+        if (POST[`quantity${i}`] > 0) {
+            empty = false;
+            console.log("Some quantities inputted.")
+        }
+        // Is quanity available?
+        if (POST[`quantity${i}`] > products[i].quantity_available) {
+            console.log("Quantities requested exceeds quantity available.")
+            has_errors = true;
+            break;
         }
     }
     
-
-    // Off-nominal case #2: if no quantities are selected, go back to the order page
-    var empty = 0 // set the number of empty quantities to zero
+    // If off-nonimal #1 or #2, return to order page with quantities 
+    if(has_errors == true || empty == true) {
+        response.redirect('./products_display.html?error=true&' + qs.stringify(POST))// go back to order page
+        return;
+    } 
+    
+    // quantities are valid so remove from inventory
     for (i = 0; i < products.length; i++) {
-        if (POST[`quantity${i}`] == '') {
-            empty++
-        }
+        products[i].quantity_available -= Number(POST[`quantity${i}`]);
     }
-    // if the number of empty quantities is equal to the total number of quantity boxes
-    if (empty == products.length) {
-        response.redirect('./products_display.html')// go back to order page
-        console.log("No quantities inputted.")
-        return next();
-        // Display message on page explaining the error
-    }
-
-    // Check that the user doesn't request more than what is available
-    for (i = 0; i < products.length; i++) {
-        // if quantity requested > quantity available 
-        if (POST[`quantity${i}`] > products[i].quantity_available) {
-            response.redirect('./products_display.html') // go back to order page
-            console.log("Quantities requested exceeds quantity available.")
-            return next();
-            // Display message on page explaining the error
-        }
-    }
-
     // shows in the console the values received 
     console.log(Date.now() + ': Purchase made from ip ' + request.ip + ' data: ' + JSON.stringify(POST));
 
