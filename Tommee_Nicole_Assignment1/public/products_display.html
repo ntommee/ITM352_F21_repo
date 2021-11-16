@@ -24,12 +24,6 @@
     // if there are errors, display all the errors 
     document.getElementById(theTextbox.name + '_label').innerHTML = errors_array.join(", ");
   }
-
-  // check to see make sure the user doesn't request more than what is available
-  function checkQuantityRequested(theTextbox) {
-    // if quantity requested > quantity available
-    // Display error message
-  }
 </script>
 
 <!DOCTYPE html>
@@ -81,7 +75,7 @@
               <h2>${products[i].name}</h2> 
               <p><span>$${products[i].price} | Quantity Available: ${products[i].quantity_available} </span></p> 
               <label id="quantity${i}_label"}"> Enter a quantity</label> 
-              <input type = "text" placeholder = "0" name="quantity${i}" onkeyup = "checkQuantityTextbox(this);">              
+              <input type = "text" placeholder = "0" name="quantity${i}" maxlength="3" size="5"onkeyup = "checkQuantityTextbox(this);">              
               </div>`);
             }
           </script>
@@ -91,8 +85,8 @@
     <!--submit button that shows "purchase"-->
     <br>
     <br>
-    <input type="submit" value="Purchase" name="purchase_submit" 
-    style="margin:0px auto; display:block; background-color: palevioletred;">
+    <input type="submit" value="Purchase" name="purchase_submit"
+      style="margin:0px auto; display:block; background-color: palevioletred;">
     </form>
 
     <!-- Footer -->

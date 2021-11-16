@@ -30,19 +30,54 @@ app.get("/product_data.js", function (request, response, next) {
     response.send(products_str);
 });
 
-/*app.post("/process_form", function (request, response) {
-    response.send(request.body);
-});
-*/
+
 app.post("/process_form", function (request, response, next) {
     let POST = request.body;
-    // if you try to direct to the invoice page without having clicked the purchase button, show the error message
+    // if error with submit value, show error message
     if (typeof POST['purchase_submit'] == 'undefined') {
         response.send("Please purchase some items first!");
         console.log('No purchase form data');
         next();
     }
 
+    // Off-nominal case #1: If user submits an invalid quantitiy, 
+    for (i = 0; i < products.length; i++) {
+        if (!(isNonNegInt(POST[`quantity${i}`]))) {
+            response.redirect('./products_display.html') //go back to the order page
+            console.log("Non negative int value inputted.")
+            return next();
+            // Display message on page explaining the error
+        }
+    }
+    
+
+    // Off-nominal case #2: if no quantities are selected, go back to the order page
+    var empty = 0 // set the number of empty quantities to zero
+    for (i = 0; i < products.length; i++) {
+        if (POST[`quantity${i}`] == '') {
+            empty++
+        }
+    }
+    // if the number of empty quantities is equal to the total number of quantity boxes
+    if (empty == products.length) {
+        response.redirect('./products_display.html')// go back to order page
+        console.log("No quantities inputted.")
+        return next();
+        // Display message on page explaining the error
+    }
+
+    // Check that the user doesn't request more than what is available
+    for (i = 0; i < products.length; i++) {
+        // if quantity requested > quantity available 
+        if (POST[`quantity${i}`] > products[i].quantity_available) {
+            response.redirect('./products_display.html') // go back to order page
+            console.log("Quantities requested exceeds quantity available.")
+            return next();
+            // Display message on page explaining the error
+        }
+    }
+
+    // shows in the console the values received 
     console.log(Date.now() + ': Purchase made from ip ' + request.ip + ' data: ' + JSON.stringify(POST));
 
     var contents = fs.readFileSync('./invoice.template', 'utf8');
@@ -53,9 +88,11 @@ app.post("/process_form", function (request, response, next) {
         str = '';
         for (i = 0; i < products.length; i++) {
             a_qty = 0;
+            // if the quantity is valid, store the quantity in a_qty
             if (typeof POST[`quantity${i}`] != 'undefined') {
                 a_qty = POST[`quantity${i}`];
             }
+            // if the quantity is greater than 0, carry out calculations for extended price & subtotal
             if (a_qty > 0) {
                 // product row
                 extended_price = a_qty * products[i].price
@@ -77,18 +114,17 @@ app.post("/process_form", function (request, response, next) {
         // Compute shipping
         if (subtotal <= 45) {
             shipping = 10;
-          } else if (subtotal <= 100) {
+        } else if (subtotal <= 100) {
             shipping = 10;
-          } else {
+        } else {
             shipping = 0.07 * subtotal; // 7% of subtotal
-          }
+        }
 
         // Compute grand total
         total = subtotal + tax + shipping;
 
         return str;
     }
-
 });
 
 // route all other GET requests to files in public 
@@ -96,6 +132,9 @@ app.use(express.static('./public')); // essentially replaces http-server
 
 // start server
 app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
+
+
+// functions
 
 function isNonNegInt(q, returnErrors = false) {
     errors = []; // assume no errors at first

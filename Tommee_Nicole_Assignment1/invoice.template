@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<style>
+  body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-color: pink;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+  }
+</style>
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,15 +21,17 @@
 </head>
 
 <body>
+  <h2>Thank you for your purchase! <br> Here is a copy of your receipt: </h2>
   <table border="2">
-    <tbody>
+    <tbody style="text-align: center;">
       <tr>
-        <th style="text-align: center;" width="43%">Item</th>
+        <th style="text-align: center;" width="43%">Product Name</th>
         <th style="text-align: center;" width="11%">Quantity</th>
         <th style="text-align: center;" width="13%">Price</th>
         <th style="text-align: center;" width="54%">Extended Price</th>
       </tr>
-        ${display_invoice_table_rows()}
+      
+      ${display_invoice_table_rows()}
       <tr>
         <td colspan="4" width="100%">&nbsp;</td>
       </tr>
@@ -29,7 +43,7 @@
       </tr>
       <tr>
         <td style="text-align: center;" colspan="3" width="67%"><span style="font-family: arial;">Tax @
-        ${(100* tax_rate)}%</span></td>
+            ${(100* tax_rate)}%</span></td>
         <td width="54%">$${tax.toFixed(2)}</td>
       </tr>
       <tr>
@@ -44,7 +58,7 @@
   </table>
 
   <div> <b> <br>
-      OUR SHIPPING POLICY IS: <br>
+      SHIPPING RATES: <br>
       A subtotal $0 - $45 will be $10 shipping <br>
       A subtotal $45 - $99.99 will be $15 shipping <br>
       Subtotals over $100 will be charged 7% of the subtotal amount
