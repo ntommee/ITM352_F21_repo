@@ -18,9 +18,7 @@ app.get("/product_data.js", function (request, response, next) {
     response.send(products_str);
 });
 
-
-
-app.post('/process_form', function (request, response, next) {
+function process_quantity_form (POST, response) {
     let brand = products[0]['brand'];
     let brand_price = products[0]['price'];
 
@@ -28,7 +26,7 @@ app.post('/process_form', function (request, response, next) {
     if (typeof q != 'undefined') {
         if (isNonNegInt(q)) {
             products[0].total_sold += Number(q);
-            response.send(`<h2>Thank you for purchasing ${q} ${brand}. Your total is \$${q * brand_price}!</h2>`);
+            response.redirect('receipt.html?quantity=' + q);
         } else {
             response.send(`Error: ${q} is not a quantity. Hit the back button to fix..`)
         }
@@ -36,6 +34,10 @@ app.post('/process_form', function (request, response, next) {
         response.send(`Hey! You need to pick some stuff!`);
     }
     next();
+}
+
+app.post('/process_form', function (request, response, next) {
+    process_quantity_form(request.body, response);
 });
 
 app.use(express.static('./public')); // essentially replaces http-server
