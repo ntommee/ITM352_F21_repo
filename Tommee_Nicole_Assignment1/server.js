@@ -56,7 +56,7 @@ app.post("/process_form", function (request, response, next) {
             empty = false;
             console.log("Some quantities inputted.")
         }
-        // Is quanity available?
+        // Is quantity available?
         if (POST[`quantity${i}`] > products[i].quantity_available) {
             console.log("Quantities requested exceeds quantity available.")
             has_errors = true;
@@ -65,10 +65,13 @@ app.post("/process_form", function (request, response, next) {
     }
     
     // If off-nonimal #1 or #2, return to order page with quantities 
-    if(has_errors == true || empty == true) {
+    if(has_errors == true) {
         response.redirect('./products_display.html?error=true&' + qs.stringify(POST))// go back to order page
         return;
-    } 
+    } else if (empty == true) {
+        response.redirect('./products_display.html?error=true&' + qs.stringify(POST))// go back to order page
+        return;
+    }
     
     // quantities are valid so remove from inventory
     for (i = 0; i < products.length; i++) {
