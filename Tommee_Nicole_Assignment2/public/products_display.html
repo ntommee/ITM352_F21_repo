@@ -5,12 +5,12 @@
 <script>
   let params = (new URL(document.location)).searchParams;
   window.onload = () => {
-    if ((params.has('error'))) {
+    if ((params.has('errorMessage'))) {
       for (i in products) {
         // put quantity values from qstring into quantity textboxes
         product_selection_form[`quantity${i}`].value = params.get(`quantity${i}`);
       }
-      alert("You entered an invalid quantity");
+      alert(params.get("errorMessage"));
     }
   }
 

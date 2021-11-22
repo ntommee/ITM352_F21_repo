@@ -7,6 +7,7 @@
 var express = require('express');
 var app = express();
 var fs = require('fs');
+const QueryString = require('qs');
 const qs = require('querystring');
 
 // get the body
@@ -33,6 +34,7 @@ app.get("/product_data.js", function (request, response, next) {
 
 app.post("/process_form", function (request, response, next) {
     let POST = request.body;
+
     // if error with submit value, show error message
     if (typeof POST['purchase_submit'] == 'undefined') {
         response.send("Please purchase some items first!");
@@ -42,38 +44,33 @@ app.post("/process_form", function (request, response, next) {
     }
 
     // Validations - assume no errors to start
-    var has_errors = false;
-    var empty = true; // assume no quantities
-    // Off-nominal case #1: If user submits an invalid quantitiy, make has_errors true
-    for (i = 0; i < products.length; i++) {
-        if (!(isNonNegInt(POST[`quantity${i}`]))) {
-           console.log("Non negative int value inputted.")
-           has_errors = true;
-           break;
+    var errors = {};
+
+    for (i in products) {
+        q = POST['quantity' + i];
+        if (isNonNegInt(q) == false) {
+            errors['invalid' + i] = `${q} is not a valid quantity for ${products[i].name}`;
         }
-        // Off-nominal case #2: if no quantities are selected, empty is true
-        if (POST[`quantity${i}`] > 0) {
-            empty = false;
-            console.log("Some quantities inputted.")
-        }
-        // Is quantity available?
-        if (POST[`quantity${i}`] > products[i].quantity_available) {
-            console.log("Quantities requested exceeds quantity available.")
-            has_errors = true;
-            break;
+
+        if (q > products[i].quantity_available) {
+            errors['quantity' + i] = `${q} items are not available for ${products[i].name}`;
         }
     }
-    
-    // If off-nonimal #1 or #2, return to order page with quantities 
-    if((has_errors == true) || (empty == true)) {
-        response.redirect('./products_display.html?error=true&' + qs.stringify(POST))// go back to order page
-        return;
-    } 
-    
-    // quantities are valid so remove from inventory
-    for (i = 0; i < products.length; i++) {
-        products[i].quantity_available -= Number(POST[`quantity${i}`]);
+
+    if (Object.keys(errors).length > 0) {
+        var errorMessage_str = '';
+        for (err in errors) {
+            errorMessage_str += errors[err] + '\n';
+        }
+        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&` + QueryString.stringify(POST));
+    } else {
+        // quantities are valid so remove from inventory
+        for (i = 0; i < products.length; i++) {
+            products[i].quantity_available -= Number(POST[`quantity${i}`]);
+        }
     }
+
+
     // shows in the console the values received 
     console.log(Date.now() + ': Purchase made from ip ' + request.ip + ' data: ' + JSON.stringify(POST));
 
