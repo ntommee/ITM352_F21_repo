@@ -10,12 +10,7 @@
         // put quantity values from qstring into quantity textboxes
         product_selection_form[`quantity${i}`].value = params.get(`quantity${i}`);
       }
-      var errors = JSON.parse(params.get('error'));
-        let err_str = '';
-        for (err in errors) {
-          err_str += errors[err] + '\n';
-        }
-        alert(err_str);
+      alert("You entered an invalid quantity");
     }
   }
 

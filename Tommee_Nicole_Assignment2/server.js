@@ -65,13 +65,10 @@ app.post("/process_form", function (request, response, next) {
     }
     
     // If off-nonimal #1 or #2, return to order page with quantities 
-    if(has_errors == true) {
+    if((has_errors == true) || (empty == true)) {
         response.redirect('./products_display.html?error=true&' + qs.stringify(POST))// go back to order page
         return;
-    } else if (empty == true) {
-        response.redirect('./products_display.html?error=true&' + qs.stringify(POST))// go back to order page
-        return;
-    }
+    } 
     
     // quantities are valid so remove from inventory
     for (i = 0; i < products.length; i++) {
