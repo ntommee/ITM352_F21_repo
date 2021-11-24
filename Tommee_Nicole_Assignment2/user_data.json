@@ -1,6 +1,6 @@
 {
     "dport": {
-        "password": "portspassword",
+        "password": "test",
         "email": "test@test.com"
     },
     "kazman": {
@@ -13,4 +13,5 @@
         "password": "grader",
         "email": "itm352@hawaii.edu"
     }
+    
 }
