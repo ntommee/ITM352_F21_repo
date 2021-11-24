@@ -10,6 +10,9 @@ var fs = require('fs');
 const QueryString = require('qs');
 const qs = require('querystring');
 const { response } = require('express');
+const { concatSeries } = require('async');
+var errors = {}; // keep errors on server to share with registration page
+
 
 // functions
 function isNonNegInt(q, returnErrors = false) {
@@ -48,6 +51,7 @@ app.get("/product_data.js", function (request, response, next) {
 
 app.post("/process_form", function (request, response, next) {
     let POST = request.body;
+    let params = new URLSearchParams(request.body);
 
     // if error with submit value, show error message
     if (typeof POST['purchase_submit'] == 'undefined') {
@@ -76,7 +80,7 @@ app.post("/process_form", function (request, response, next) {
         }
     }
     // if no quantities entered
-    if (empty == true){
+    if (empty == true) {
         errors['empty' + i] = `Please enter some quantities.`;
     }
 
@@ -92,7 +96,7 @@ app.post("/process_form", function (request, response, next) {
         for (i = 0; i < products.length; i++) {
             products[i].quantity_available -= Number(POST[`quantity${i}`]);
         }
-        response.redirect('./login?' + QueryString.stringify(POST));
+        response.redirect('./login?' + params.toString());
     }
 
     // shows in the console the values received 
@@ -122,23 +126,38 @@ app.use(express.urlencoded({ extended: true })); // if you get a POST request fr
 app.get("/register", function (request, response) {
     // Give a simple register form
     str = `
-<body>
-<form action="register" method="POST">
-<input type="text" name="username" size="40" placeholder="enter username" ><br />
-<input type="password" name="password" size="40" placeholder="enter password"><br />
-<input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
-<input type="email" name="email" size="40" placeholder="enter email"><br />
-<input type="submit" value="Submit" id="submit">
-</form>
-</body>
+        <body>
+        <form action="register" method="POST">
+        <input type="text" name="username" size="40" placeholder="enter username" ><br />
+        ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
+        ${(typeof errors['username_taken'] != 'undefined') ? errors['username_taken'] : ''}
+        <br />
+        <input type="password" name="password" size="40" placeholder="enter password"><br />
+        <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
+        ${(typeof errors['password_mismatch'] != 'undefined') ? errors['password_mismatch'] : ''}
+        <br />
+        <input type="email" name="email" size="40" placeholder="enter email"><br />
+        <input type="submit" value="Submit" id="submit">
+        </form>
+        </body>
     `;
     response.send(str);
 });
 
 app.post("/register", function (request, response) {
-    username = request.body['username'];
+    username = request.body['username'].toLowerCase();
     // process a simple register form
-    if (typeof users_reg_data[username] == 'undefined' && (request.body['password'] == request.body['repeat_password'])) {
+    if (typeof users_reg_data[username] != 'undefined') {
+        errors['username_taken'] = `Hey! ${username} is already registered!`;
+    }
+    if (request.body.password != request.body.repeat_password) {
+        errors['password_mismatch'] = `Repeat password not the same as password!`;
+    }
+
+    if (request.body.username == '') {
+        errors['no_username'] = `You need to select a username!`;
+    }
+    if (Object.keys(errors).length == 0) {
         users_reg_data[username] = {};
         users_reg_data[username].password = request.body['password'];
         users_reg_data[username].email = request.body['email'];
@@ -146,16 +165,18 @@ app.post("/register", function (request, response) {
         response.redirect('./login');
         console.log("successfully registered");
     } else {
-        response.redirect('./register');
-        console.log("not registered");
+        response.redirect("./register");
+        console.log(errors);
+
     }
 });
 
 app.get("/login", function (request, response) {
     // Give a simple login form
+    let params = new URLSearchParams(request.query);
     str = `
 <body>
-<form action="" method="POST">
+<form action="?${params.toString()}" method="POST">
 <input type="text" name="username" size="40" placeholder="enter username" ><br />
 <input type="password" name="password" size="40" placeholder="enter password"><br />
 <input type="submit" value="Submit" id="submit">
@@ -166,13 +187,14 @@ app.get("/login", function (request, response) {
 });
 
 app.post("/login", function (request, response) {
+    let params = new URLSearchParams(request.query);
     // Process login form POST and redirect to logged in page if ok, back to login page if not
-    let login_username = request.body['username'];
+    let login_username = request.body['username'].toLowerCase();
     let login_password = request.body['password'];
     // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
-            response.redirect('./invoice.html?' +QueryString.stringify(request.body));
+            response.redirect('./invoice.html?' + params.toString());
         } else {
             response.redirect(`./login?err=incorrect password for ${login_username} `);
         }
