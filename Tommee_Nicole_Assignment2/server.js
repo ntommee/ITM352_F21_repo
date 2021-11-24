@@ -92,7 +92,7 @@ app.post("/process_form", function (request, response, next) {
         for (i = 0; i < products.length; i++) {
             products[i].quantity_available -= Number(POST[`quantity${i}`]);
         }
-        response.redirect('./invoice.html?' + QueryString.stringify(POST));
+        response.redirect('./login?' + QueryString.stringify(POST));
     }
 
     // shows in the console the values received 
@@ -172,7 +172,7 @@ app.post("/login", function (request, response) {
     // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
-            response.send(`${login_username} is logged in`);
+            response.redirect('./invoice.html?' +QueryString.stringify(request.body));
         } else {
             response.redirect(`./login?err=incorrect password for ${login_username} `);
         }
