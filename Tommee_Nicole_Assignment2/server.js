@@ -203,7 +203,7 @@ app.get("/login", function (request, response) {
     <br>
     <input type="submit" value="Login" id="submit" style="margin:0px auto; background-color: palevioletred;">
     </form>
-    Don't have an account? Register <a href="./register"> here.</a>
+    <strong> Don't have an account? <a href="./register">Register</a> </strong>
     </body>
     `;
     response.send(str);
