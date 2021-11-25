@@ -173,7 +173,7 @@ app.post("/register", function (request, response) {
         users_reg_data[username].password = request.body['password'];
         users_reg_data[username].email = request.body['email'];
         fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
-        response.redirect('./login');
+        response.redirect('./login?'+ params.toString());
         console.log("successfully registered");
     } else {
         response.redirect("./register");
@@ -203,7 +203,7 @@ app.get("/login", function (request, response) {
     <br>
     <input type="submit" value="Login" id="submit" style="margin:0px auto; background-color: palevioletred;">
     </form>
-    <strong> Don't have an account? <a href="./register">Register</a> </strong>
+    <strong> Don't have an account? <a href="./register? $${params.toString()}">Register</a> </strong>
     </body>
     `;
     response.send(str);
@@ -219,10 +219,10 @@ app.post("/login", function (request, response) {
         if (users_reg_data[login_username]['password'] == login_password) {
             response.redirect('./invoice.html?' + params.toString());
         } else {
-            response.redirect(`./login?err=incorrect password for ${login_username} `);
+            response.redirect(`./login?err=incorrect password for ${login_username}` + params.toString());
         }
     } else {
-        response.redirect(`./login?err=${login_username} does not exist`);
+        response.redirect(`./login?err=${login_username} does not exist` + params.toString());
     }
 
     response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
