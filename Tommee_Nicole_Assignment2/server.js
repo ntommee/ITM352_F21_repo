@@ -126,18 +126,28 @@ app.use(express.urlencoded({ extended: true })); // if you get a POST request fr
 app.get("/register", function (request, response) {
     // Give a simple register form
     str = `
+        <style>
+        body{
+            background-color: pink;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        </style>
         <body>
+        <h1> Create Your Hello Kitty Squishmallow Account</h1>
         <form action="register" method="POST">
+        <label for="username"><strong>Username</strong></label> <br>
         <input type="text" name="username" size="40" placeholder="enter username" ><br />
         ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
         ${(typeof errors['username_taken'] != 'undefined') ? errors['username_taken'] : ''}
         <br />
+        <label for="username"><strong>Password</strong></label> <br>
         <input type="password" name="password" size="40" placeholder="enter password"><br />
         <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
         ${(typeof errors['password_mismatch'] != 'undefined') ? errors['password_mismatch'] : ''}
         <br />
+        <label for="username"><strong>Email</strong></label> <br>
         <input type="email" name="email" size="40" placeholder="enter email"><br />
-        <input type="submit" value="Submit" id="submit">
+        <input type="submit" value="Submit" id="submit" style="margin:0px auto; background-color: palevioletred;">
         </form>
         </body>
     `;
@@ -145,6 +155,7 @@ app.get("/register", function (request, response) {
 });
 
 app.post("/register", function (request, response) {
+    let params = new URLSearchParams(request.query);
     username = request.body['username'].toLowerCase();
     // process a simple register form
     if (typeof users_reg_data[username] != 'undefined') {
@@ -175,14 +186,26 @@ app.get("/login", function (request, response) {
     // Give a simple login form
     let params = new URLSearchParams(request.query);
     str = `
-<body>
-<form action="?${params.toString()}" method="POST">
-<input type="text" name="username" size="40" placeholder="enter username" ><br />
-<input type="password" name="password" size="40" placeholder="enter password"><br />
-<input type="submit" value="Submit" id="submit">
-</form>
-</body>
-`;
+    <style>
+        body{
+            background-color: pink;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        </style>
+    <body>
+    <h1> Hello Kitty Squishmallow Login</h1>
+    <form action="?${params.toString()}" method="POST">
+    <label for="username"><strong>Username</strong></label> <br>
+    <input type="text" name="username" size="40" placeholder="enter username" ><br />
+    <br>
+    <label for="username"><strong>Password</strong></label> <br>
+    <input type="password" name="password" size="40" placeholder="enter password"><br />
+    <br>
+    <input type="submit" value="Login" id="submit" style="margin:0px auto; background-color: palevioletred;">
+    </form>
+    Don't have an account? Register <a href="./register"> here.</a>
+    </body>
+    `;
     response.send(str);
 });
 
