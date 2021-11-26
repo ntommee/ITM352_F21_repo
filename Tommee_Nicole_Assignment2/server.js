@@ -12,6 +12,7 @@ const qs = require('querystring');
 const { response } = require('express');
 const { concatSeries } = require('async');
 var errors = {}; // keep errors on server to share with registration page
+var loginerrors = {} // keep errors on server to share with login page
 
 
 // functions
@@ -129,26 +130,38 @@ app.get("/register", function (request, response) {
     str = `
         <style>
         body{
+            text-align: center;
             background-color: pink;
             font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        h1{
+            margin-top: 30px;
         }
         </style>
         <body>
         <h1> Create Your Hello Kitty Squishmallow Account</h1>
         <form action="?${params.toString()}" method="POST">
-        <label for="username"><strong>Username</strong></label> <br>
+        <label style = "margin-right: 198px;" for="fullname"><strong>Full Name</strong></label> <br>
+        <input type="text" name="fullname" size="40" placeholder="enter full name" ><br />
+        <br>
+        <label style = "margin-right: 30px;" for="username"><strong>Username</strong></label> 
+        <label style = "font-size:12px;" for="username">must be between 4-10 characters</label>
+        <br>
         <input type="text" name="username" size="40" placeholder="enter username" ><br />
         ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
         ${(typeof errors['username_taken'] != 'undefined') ? errors['username_taken'] : ''}
         <br />
-        <label for="username"><strong>Password</strong></label> <br>
+        <label style = "margin-right: 58px;" for="username"><strong>Password</strong></label>
+        <label style = "font-size:12px; text-align: left;" for="username">must be at least 6 characters</label>
+        <br>
         <input type="password" name="password" size="40" placeholder="enter password"><br />
         <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
         ${(typeof errors['password_mismatch'] != 'undefined') ? errors['password_mismatch'] : ''}
         <br />
-        <label for="username"><strong>Email</strong></label> <br>
+        <label style = "margin-right: 235px;" for="username"><strong>Email</strong></label> <br>
         <input type="email" name="email" size="40" placeholder="enter email"><br />
-        <input type="submit" value="Submit" id="submit" style="margin:0px auto; background-color: palevioletred;">
+        <br>
+        <input type="submit" value="Register" id="submit" style="margin:0px auto; background-color: palevioletred;">
         </form>
         </body>
     `;
@@ -173,11 +186,12 @@ app.post("/register", function (request, response) {
         users_reg_data[username] = {};
         users_reg_data[username].password = request.body['password'];
         users_reg_data[username].email = request.body['email'];
+        users_reg_data[username].fullname = request.body['fullname'];
         fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
-        response.redirect('./login?'+ params.toString());
+        response.redirect('./login?' + params.toString());
         console.log("successfully registered") + params.toString();
     } else {
-        response.redirect("./register?" + params.toString()) ;
+        response.redirect("./register?" + params.toString());
         console.log(errors);
 
     }
@@ -191,20 +205,26 @@ app.get("/login", function (request, response) {
         body{
             background-color: pink;
             font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            text-align: center;
+        }
+        h1{
+            margin-top: 30px;
         }
         </style>
     <body>
     <h1> Hello Kitty Squishmallow Login</h1>
     <form action="?${params.toString()}" method="POST">
-    <label for="username"><strong>Username</strong></label> <br>
+    <label style = "margin-right: 198px;" for="username"><strong>Username</strong></label> <br>
     <input type="text" name="username" size="40" placeholder="enter username" ><br />
+    ${(typeof loginerrors['user_no_exist'] != 'undefined') ? loginerrors['user_no_exist'] : ''}
     <br>
-    <label for="username"><strong>Password</strong></label> <br>
+    <label style = "margin-right: 200px;"for="password"><strong>Password</strong></label> <br>
     <input type="password" name="password" size="40" placeholder="enter password"><br />
+    ${(typeof loginerrors['incorrect_password'] != 'undefined') ? loginerrors['incorrect_password'] : ''}
     <br>
     <input type="submit" value="Login" id="submit" style="margin:0px auto; background-color: palevioletred;">
     </form>
-    <strong> Don't have an account? <a href="./register? $${params.toString()}">Register</a> </strong>
+    <strong> Don't have an account? <a href="./register?${params.toString()}">Register</a> </strong>
     </body>
     `;
     response.send(str);
@@ -221,9 +241,12 @@ app.post("/login", function (request, response) {
             response.redirect('./invoice.html?' + params.toString());
         } else {
             response.redirect(`./login?err=incorrect password for ${login_username}` + params.toString());
+            loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
+
         }
     } else {
-        response.redirect(`./login?err=${login_username} does not exist` + params.toString());
+        response.redirect('./login?' + params.toString());
+        loginerrors['user_no_exist'] = `${login_username} does not exist`;
     }
 
     response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)

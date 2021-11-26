@@ -1,16 +1,13 @@
 {
-    "dport": {
-        "password": "test",
-        "email": "test@test.com"
-    },
-    "kazman": {
-        "name": "Rick Kazman",
-        "password": "kazmanpassword",
-        "email": "kazman@hawaii.edu"
-    },
     "itm352": {
-        "name": "ITM 352",
         "password": "grader",
-        "email": "itm352@hawaii.edu"
+        "email": "itm352@hawaii.edu",
+        "fullname": "ITM 352"
+    },
+    "nicole": {
+        "password": "nicole",
+        "email": "ntommee@hawaii.edu",
+        "fullname": "Nicole Tommee"
     }
+
 }
