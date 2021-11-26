@@ -240,7 +240,7 @@ app.post("/login", function (request, response) {
         if (users_reg_data[login_username]['password'] == login_password) {
             response.redirect('./invoice.html?' + params.toString());
         } else {
-            response.redirect(`./login?err=incorrect password for ${login_username}` + params.toString());
+            response.redirect('./login?' + params.toString());
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
 
         }

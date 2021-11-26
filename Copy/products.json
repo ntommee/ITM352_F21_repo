@@ -1,0 +1,50 @@
+    [
+        {
+            "name": "20 Inch Floral",
+            "price": 22.00,
+            "image": "hk1.jpeg",
+            "quantity_available": 4
+        },
+        {
+            "name": "20 Inch Sunglasses",
+            "price": 22.00,
+            "image": "hk2.jpeg",
+            "quantity_available": 6
+        },
+        {
+            "name": "20 Inch Mermaid",
+            "price": 22.00,
+            "image": "hk3.jpeg",
+            "quantity_available": 2
+        },
+        {
+            "name": "20 Inch Scuba",
+            "price": 22.00,
+            "image": "hk4.jpeg",
+            "quantity_available": 4
+        },
+        {
+            "name": "12 Inch Red",
+            "price": 40.00,
+            "image": "hk5.jpeg",
+            "quantity_available": 2
+        },
+        {
+            "name": "12 Inch Teal",
+            "price": 40.00,
+            "image": "hk6.jpeg",
+            "quantity_available": 3
+        },
+        {
+            "name": "12 Inch Pink",
+            "price": 40.00,
+            "image": "hk7.jpeg",
+            "quantity_available": 6
+        },
+        {
+            "name": "12 Inch Blue",
+            "price": 40.00,
+            "image": "hk8.jpeg",
+            "quantity_available": 2
+        }
+    ]
