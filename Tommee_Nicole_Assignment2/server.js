@@ -124,6 +124,7 @@ if (fs.existsSync(filename)) {
 app.use(express.urlencoded({ extended: true })); // if you get a POST request from a URL it will put the request in the body so you can use the data
 
 app.get("/register", function (request, response) {
+    let params = new URLSearchParams(request.query);
     // Give a simple register form
     str = `
         <style>
@@ -134,7 +135,7 @@ app.get("/register", function (request, response) {
         </style>
         <body>
         <h1> Create Your Hello Kitty Squishmallow Account</h1>
-        <form action="register" method="POST">
+        <form action="?${params.toString()}" method="POST">
         <label for="username"><strong>Username</strong></label> <br>
         <input type="text" name="username" size="40" placeholder="enter username" ><br />
         ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
@@ -174,9 +175,9 @@ app.post("/register", function (request, response) {
         users_reg_data[username].email = request.body['email'];
         fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
         response.redirect('./login?'+ params.toString());
-        console.log("successfully registered");
+        console.log("successfully registered") + params.toString();
     } else {
-        response.redirect("./register");
+        response.redirect("./register?" + params.toString()) ;
         console.log(errors);
 
     }
