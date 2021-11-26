@@ -1,13 +1,1 @@
-{
-    "itm352": {
-        "password": "grader",
-        "email": "itm352@hawaii.edu",
-        "fullname": "ITM 352"
-    },
-    "nicole": {
-        "password": "nicole",
-        "email": "ntommee@hawaii.edu",
-        "fullname": "Nicole Tommee"
-    }
-
-}
+{"itm352":{"password":"grader","email":"itm352@hawaii.edu","fullname":"ITM 352"},"nicole":{"password":"nicole","email":"ntommee@hawaii.edu","fullname":"Nicole Tommee"},"testuser":{"password":"test","email":"test@test.com","fullname":"Test User"},"rabbit":{"password":"test","email":"test@test.com","fullname":"rabbit one"},"rabbit2":{"password":"rabbit2","email":"rabbit2@gmail.com","fullname":"rabbit two"},"rabbit3":{"password":"rabbit3","email":"rabbit@gmail.com","fullname":"rabbit three"}}
