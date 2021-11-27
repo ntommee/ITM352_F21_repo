@@ -78,6 +78,7 @@
     width: 40%;
   }
 
+
   .shippingRates {
     background-color: palevioletred;
     padding-bottom: 20px;
@@ -99,12 +100,8 @@
     <script>
       document.write(params.get('fullname') + "!");
     </script>
-    <br> A copy of your receipt will be sent to 
-    <script>
-      document.write(params.get('email'));
-    </script>
+    <br>
   </h2>
-
 
   <img src="./images/hkwaving.gif" style="width:50%">
   <table border="2">
@@ -150,6 +147,15 @@
       </script>
     </tbody>
   </table>
+
+  <strong>
+    <p>
+      A copy of your receipt will be sent to
+      <script>
+        document.write(params.get('email'));
+      </script>
+    </p>
+  </strong>
 
   <div class="shippingRates"> <b> <br>
       SHIPPING RATES: <br>

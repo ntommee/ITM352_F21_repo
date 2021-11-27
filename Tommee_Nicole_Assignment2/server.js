@@ -145,13 +145,12 @@ app.get("/register", function (request, response) {
         </style>
         <body>
         <h1> Create Your Hello Kitty Squishmallow Account</h1>
-        <form action="?${params.toString()}" method="POST">
+        <form action="?${params.toString()}" method="POST" name="register">
         <label style = "margin-right: 198px;" for="fullname"><strong>Full Name</strong></label> <br>
         <input type="text" name="fullname" size="40" placeholder="enter full name" maxlength="30"><br />
         <p id = "errorMessage">
         ${(typeof errors['no_name'] != 'undefined') ? errors['no_name'] : ''}
         ${(typeof errors['nameError'] != 'undefined') ? errors['nameError'] : ''}
-
         </p>
         <br>
         <label style = "margin-right: 30px;" for="username"><strong>Username</strong></label> 
@@ -211,26 +210,26 @@ app.post("/register", function (request, response) {
 
     // Full name - only letters
     var alphabet = /^[A-Za-z]+$/;
-    if(alphabet.test(request.body.fullname)) {
+    if (alphabet.test(request.body.fullname)) {
     } else {
         errors['nameError'] = `Name must have alphabet characters only`;
     }
-        
+
     // Username - only numbers and characters are valid 
     var letters = /^[0-9a-zA-Z]+$/;
-    if (letters.test(username)){
+    if (letters.test(username)) {
     } else {
         errors['validateUser'] = `Username must have alphabet and numerical characters only`;
     }
 
-
     // Username must be between 4-10 characters. Already set maxlength to 10, so just make sure it's at least 4 characters
     if (request.body.username.length < 4) {
         errors['validateUser'] = `Username must be at least 4 characters`;
+
     }
 
     // Password should have a minimum of 6 characters 
-    if (request.body.password.length < 6){
+    if (request.body.password.length < 6) {
         errors['validatePassword'] = `Password must be at least 6 characters`;
     }
 
@@ -250,16 +249,15 @@ app.post("/register", function (request, response) {
         response.redirect('./login?' + params.toString());
         console.log("successfully registered") + params.toString();
     } else {
-        response.redirect("./register?" + params.toString());
+        response.redirect('./register?' + params.toString());
         console.log(errors);
-
     }
 });
 
-app.get("/login", function (request, response) {
-    // Give a simple login form
-    let params = new URLSearchParams(request.query);
-    str = `
+    app.get("/login", function (request, response) {
+        // Give a simple login form
+        let params = new URLSearchParams(request.query);
+        str = `
     <style>
         body{
             background-color: pink;
@@ -293,37 +291,37 @@ app.get("/login", function (request, response) {
     <strong> Don't have an account? <a href="./register?${params.toString()}">Register</a> </strong>
     </body>
     `;
-    response.send(str);
-});
+        response.send(str);
+    });
 
-app.post("/login", function (request, response) {
-    let params = new URLSearchParams(request.query);
-    // Process login form POST and redirect to logged in page if ok, back to login page if not
-    let login_username = request.body['username'].toLowerCase();
-    let login_password = request.body['password'];
-    if (login_username == '' || (typeof users_reg_data[login_username] == 'undefined')) {
-        response.redirect('./login?' + params.toString());
-        loginerrors['user_input_error'] = `Please enter a valid username`;
-    } 
-        // check if username exists, then check password entered matches password stored
-    if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
-        if (users_reg_data[login_username]['password'] == login_password) {
-            response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&` + params.toString());
-        } else {
+    app.post("/login", function (request, response) {
+        let params = new URLSearchParams(request.query);
+        // Process login form POST and redirect to logged in page if ok, back to login page if not
+        let login_username = request.body['username'].toLowerCase();
+        let login_password = request.body['password'];
+        if (login_username == '' || (typeof users_reg_data[login_username] == 'undefined')) {
             response.redirect('./login?' + params.toString());
-            loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
-
+            loginerrors['user_input_error'] = `Please enter a valid username`;
         }
-    } 
-    // response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
+        // check if username exists, then check password entered matches password stored
+        if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
+            if (users_reg_data[login_username]['password'] == login_password) {
+                response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&}` + params.toString());
+            } else {
+                response.redirect('./login?' + params.toString());
+                loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
 
-});
+            }
+        }
+        // response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
+
+    });
 
 
-// route all other GET requests to files in public 
-app.use(express.static('./public')); // essentially replaces http-server
+    // route all other GET requests to files in public 
+    app.use(express.static('./public')); // essentially replaces http-server
 
-// start server
-app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
+    // start server
+    app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
 
 
