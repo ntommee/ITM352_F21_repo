@@ -209,7 +209,7 @@ app.post("/register", function (request, response) {
 
 
     // Full name - only letters
-    var alphabet = /^[A-Za-z]+$/;
+    var alphabet = /^[a-z][a-z\s]*$/
     if (alphabet.test(request.body.fullname)) {
     } else {
         errors['nameError'] = `Name must have alphabet characters only`;
@@ -273,7 +273,7 @@ app.post("/register", function (request, response) {
         </style>
     <body>
     <h1> Hello Kitty Squishmallow Login</h1>
-    <form action="?${params.toString()}" method="POST">
+    <form action="?${params.toString()}" method="POST" name="login_form">
     <label style = "margin-right: 198px;" for="username"><strong>Username</strong></label> <br>
     <input type="text" name="username" size="40" placeholder="enter username" ><br />
     <p id = "errorMessage">
@@ -300,19 +300,29 @@ app.post("/register", function (request, response) {
         let login_username = request.body['username'].toLowerCase();
         let login_password = request.body['password'];
         if (login_username == '' || (typeof users_reg_data[login_username] == 'undefined')) {
-            response.redirect('./login?' + params.toString());
+            response.redirect(`./login?username_error=${login_username}&` + params.toString());
             loginerrors['user_input_error'] = `Please enter a valid username`;
         }
         // check if username exists, then check password entered matches password stored
         if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
             if (users_reg_data[login_username]['password'] == login_password) {
-                response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&}` + params.toString());
-            } else {
-                response.redirect('./login?' + params.toString());
+                // redirect to the invoice, personalizing the name and email from the user logged in
+                response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&` + params.toString());
+            } else { // if password doesn't match, redirect to the login page and add error msg to array
+                response.redirect(`./login?username_error=${login_username}&` + params.toString());
                 loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
 
             }
         }
+        
+        window.onload = () => {
+        if(params.has('username_error')) {
+            // put username value from qstring back into the username textbox
+            login_form[username].value = params.get('username_error');
+
+        }
+    }
+
         // response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
 
     });
