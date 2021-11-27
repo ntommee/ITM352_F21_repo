@@ -27,11 +27,13 @@ function isNonNegInt(q, returnErrors = false) {
     return returnErrors ? errors : (errors.length == 0);
 }
 
+
 // get the body
 app.use(express.urlencoded({ extended: true }));
 
 // takes product information from json and stores in var products
 var products = require('./products.json');
+// const { text } = require('stream/consumers');
 
 // keep track of quantity sold 
 products.forEach((prod, i) => { prod.total_avail = 0 });
@@ -137,29 +139,46 @@ app.get("/register", function (request, response) {
         h1{
             margin-top: 30px;
         }
+        #errorMessage {
+            color: red;
+        }
         </style>
         <body>
         <h1> Create Your Hello Kitty Squishmallow Account</h1>
         <form action="?${params.toString()}" method="POST">
         <label style = "margin-right: 198px;" for="fullname"><strong>Full Name</strong></label> <br>
-        <input type="text" name="fullname" size="40" placeholder="enter full name" ><br />
+        <input type="text" name="fullname" size="40" placeholder="enter full name" maxlength="30"><br />
+        <p id = "errorMessage">
+        ${(typeof errors['no_name'] != 'undefined') ? errors['no_name'] : ''}
+        ${(typeof errors['nameError'] != 'undefined') ? errors['nameError'] : ''}
+
+        </p>
         <br>
         <label style = "margin-right: 30px;" for="username"><strong>Username</strong></label> 
         <label style = "font-size:12px;" for="username">must be between 4-10 characters</label>
         <br>
-        <input type="text" name="username" size="40" placeholder="enter username" ><br />
+        <input type="text" name="username" size="40" placeholder="enter username" maxlength="10"><br />
+        <p id = "errorMessage">
         ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
         ${(typeof errors['username_taken'] != 'undefined') ? errors['username_taken'] : ''}
+        ${(typeof errors['validateUser'] != 'undefined') ? errors['validateUser'] : ''}
+        </p>
         <br />
         <label style = "margin-right: 58px;" for="username"><strong>Password</strong></label>
         <label style = "font-size:12px; text-align: left;" for="username">must be at least 6 characters</label>
         <br>
         <input type="password" name="password" size="40" placeholder="enter password"><br />
         <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
+        <p id = "errorMessage">
         ${(typeof errors['password_mismatch'] != 'undefined') ? errors['password_mismatch'] : ''}
+        ${(typeof errors['validatePassword'] != 'undefined') ? errors['validatePassword'] : ''}
+        </p>
         <br />
         <label style = "margin-right: 235px;" for="username"><strong>Email</strong></label> <br>
         <input type="email" name="email" size="40" placeholder="enter email"><br />
+        <p id = "errorMessage">
+        ${(typeof errors['no_email'] != 'undefined') ? errors['no_email'] : ''}
+        </p>
         <br>
         <input type="submit" value="Register" id="submit" style="margin:0px auto; background-color: palevioletred;">
         </form>
@@ -180,14 +199,54 @@ app.post("/register", function (request, response) {
     }
 
     if (request.body.username == '') {
-        errors['no_username'] = `You need to select a username!`;
+        errors['no_username'] = `You need to enter a username!`;
     }
+    if (request.body.fullname == '') {
+        errors['no_name'] = `You need to enter a name!`;
+    }
+    if (request.body.email == '') {
+        errors['no_email'] = `You need to enter an email!`;
+    }
+
+
+    // Full name - only letters
+    var alphabet = /^[A-Za-z]+$/;
+    if(alphabet.test(request.body.fullname)) {
+    } else {
+        errors['nameError'] = `Name must have alphabet characters only`;
+    }
+        
+    // Username - only numbers and characters are valid 
+    var letters = /^[0-9a-zA-Z]+$/;
+    if (letters.test(username)){
+    } else {
+        errors['validateUser'] = `Username must have alphabet and numerical characters only`;
+    }
+
+
+    // Username must be between 4-10 characters. Already set maxlength to 10, so just make sure it's at least 4 characters
+    if (request.body.username.length < 4) {
+        errors['validateUser'] = `Username must be at least 4 characters`;
+    }
+
+    // Password should have a minimum of 6 characters 
+    if (request.body.password.length < 6){
+        errors['validatePassword'] = `Password must be at least 6 characters`;
+    }
+
+    // if no errors, continue to register the new user
     if (Object.keys(errors).length == 0) {
+        // new object for the username
         users_reg_data[username] = {};
+        // set password
         users_reg_data[username].password = request.body['password'];
+        // set email
         users_reg_data[username].email = request.body['email'];
+        // set full name
         users_reg_data[username].fullname = request.body['fullname'];
+        // write the info to the JSON file
         fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
+        // redirect to login page
         response.redirect('./login?' + params.toString());
         console.log("successfully registered") + params.toString();
     } else {
@@ -210,17 +269,24 @@ app.get("/login", function (request, response) {
         h1{
             margin-top: 30px;
         }
+        #errorMessage {
+            color: red;
+        }
         </style>
     <body>
     <h1> Hello Kitty Squishmallow Login</h1>
     <form action="?${params.toString()}" method="POST">
     <label style = "margin-right: 198px;" for="username"><strong>Username</strong></label> <br>
     <input type="text" name="username" size="40" placeholder="enter username" ><br />
-    ${(typeof loginerrors['user_no_exist'] != 'undefined') ? loginerrors['user_no_exist'] : ''}
+    <p id = "errorMessage">
+    ${(typeof loginerrors['user_input_error'] != 'undefined') ? loginerrors['user_input_error'] : ''}
+    </p>
     <br>
     <label style = "margin-right: 200px;"for="password"><strong>Password</strong></label> <br>
     <input type="password" name="password" size="40" placeholder="enter password"><br />
+    <p id = "errorMessage">
     ${(typeof loginerrors['incorrect_password'] != 'undefined') ? loginerrors['incorrect_password'] : ''}
+    </p>
     <br>
     <input type="submit" value="Login" id="submit" style="margin:0px auto; background-color: palevioletred;">
     </form>
@@ -235,21 +301,21 @@ app.post("/login", function (request, response) {
     // Process login form POST and redirect to logged in page if ok, back to login page if not
     let login_username = request.body['username'].toLowerCase();
     let login_password = request.body['password'];
-    // check if username exists, then check password entered matches password stored
+    if (login_username == '' || (typeof users_reg_data[login_username] == 'undefined')) {
+        response.redirect('./login?' + params.toString());
+        loginerrors['user_input_error'] = `Please enter a valid username`;
+    } 
+        // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
-            response.redirect('./invoice.html?' + params.toString());
+            response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&` + params.toString());
         } else {
             response.redirect('./login?' + params.toString());
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
 
         }
-    } else {
-        response.redirect('./login?' + params.toString());
-        loginerrors['user_no_exist'] = `${login_username} does not exist`;
-    }
-
-    response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
+    } 
+    // response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
 
 });
 

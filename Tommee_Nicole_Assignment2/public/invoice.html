@@ -95,7 +95,17 @@
 </head>
 
 <body>
-  <h2>Thank you for your purchase! <br> Here is a copy of your receipt: </h2>
+  <h2>Thank you for your purchase,
+    <script>
+      document.write(params.get('fullname') + "!");
+    </script>
+    <br> A copy of your receipt will be sent to 
+    <script>
+      document.write(params.get('email'));
+    </script>
+  </h2>
+
+
   <img src="./images/hkwaving.gif" style="width:50%">
   <table border="2">
     <tbody style="text-align: center;">
