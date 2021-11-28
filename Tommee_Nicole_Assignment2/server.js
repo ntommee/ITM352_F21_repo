@@ -315,14 +315,12 @@ app.post("/register", function (request, response) {
             }
         }
         
-        window.onload = () => {
+        // window.onload = () => {
         if(params.has('username_error')) {
             // put username value from qstring back into the username textbox
             login_form[username].value = params.get('username_error');
 
         }
-    }
-
         // response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
 
     });
