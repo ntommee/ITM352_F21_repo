@@ -193,6 +193,7 @@ app.get("/register", function (request, response) {
 
 app.post("/register", function (request, response) {
     let params = new URLSearchParams(request.query);
+    errors = {}; // start with no errors
     username = request.body['username'].toLowerCase();
     // process a simple register form
     if (typeof users_reg_data[username] != 'undefined') {
@@ -301,6 +302,7 @@ app.get("/login", function (request, response) {
 
 app.post("/login", function (request, response) {
     let params = new URLSearchParams(request.query);
+    loginerrors = {}; // start with no errors
     // Process login form POST and redirect to logged in page if ok, back to login page if not
     let login_username = request.body['username'].toLowerCase();
     let login_password = request.body['password'];
@@ -332,12 +334,12 @@ app.post("/login", function (request, response) {
 // route all other GET requests to files in public 
 app.use(express.static('./public')); // essentially replaces http-server
 
-                // start server
-                app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
+// start server
+app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
 
 
-        function generate_login_page(params, form_data = {}) {
-        str = `
+function generate_login_page(params, form_data = {}) {
+    str = `
         <style>
             body{
                 background-color: pink;
@@ -376,5 +378,5 @@ app.use(express.static('./public')); // essentially replaces http-server
         </body>
         `;
 
-        return str;
-        }
+    return str;
+}
