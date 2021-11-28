@@ -272,6 +272,7 @@ app.post("/login", function (request, response) {
     let login_username = request.body['username'].toLowerCase();
     let login_password = request.body['password'];
     if (login_username == '' || (typeof users_reg_data[login_username] == 'undefined')) {
+        response.redirect(`./login?username_error=${login_username}&` + params.toString());
         loginerrors['user_input_error'] = `Please enter a valid username`;
     }
     // check if username exists, then check password entered matches password stored
@@ -279,14 +280,12 @@ app.post("/login", function (request, response) {
         if (users_reg_data[login_username]['password'] == login_password) {
             // redirect to the invoice, personalizing the name and email from the user logged in
             response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&` + params.toString());
-            return; // we're done here, leave the function
         } else { // if password doesn't match, redirect to the login page and add error msg to array
+            response.redirect(`./login?username_error=${login_username}&` + params.toString());
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
+
         }
     }
-    // if we get here there were errors and we need to generate the login page again, this time with the form data that was posted
-    let str = generate_login_page(params, request.body);
-    response.send(str);
 });
 
 
@@ -316,17 +315,13 @@ function generate_login_page(params, form_data = {}) {
         <h1> Hello Kitty Squishmallow Login</h1>
         <form action="?${params.toString()}" method="POST" name="login_form">
         <label style = "margin-right: 198px;" for="username"><strong>Username</strong></label> <br>
-        <input type="text" name="username" size="40" placeholder="enter username" 
-        value="${(typeof form_data['username'] != 'undefined') ? form_data['username'] : ''}"
-        ><br />
+        <input type="text" name="username" size="40" placeholder="enter username" ><br />
         <p id = "errorMessage">
         ${(typeof loginerrors['user_input_error'] != 'undefined') ? loginerrors['user_input_error'] : ''}
         </p>
         <br>
         <label style = "margin-right: 200px;"for="password"><strong>Password</strong></label> <br>
-        <input type="password" name="password" size="40" placeholder="enter password"
-        value="${(typeof form_data['password'] != 'undefined') ? form_data['password'] : ''}"
-        ><br />
+        <input type="password" name="password" size="40" placeholder="enter password"><br />
         <p id = "errorMessage">
         ${(typeof loginerrors['incorrect_password'] != 'undefined') ? loginerrors['incorrect_password'] : ''}
         </p>
