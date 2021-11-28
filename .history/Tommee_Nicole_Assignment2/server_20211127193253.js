@@ -259,46 +259,56 @@ app.post("/register", function (request, response) {
     }
 });
 
-app.get("/login", function (request, response) {
-    // Give a simple login form
-    let params = new URLSearchParams(request.query);
-    str = generate_login_page(params);
-    response.send(str);
-});
+    app.get("/login", function (request, response) {
+        // Give a simple login form
+        let params = new URLSearchParams(request.query);
+        str = generate_login_page();
+        response.send(str);
+    });
 
-app.post("/login", function (request, response) {
-    let params = new URLSearchParams(request.query);
-    // Process login form POST and redirect to logged in page if ok, back to login page if not
-    let login_username = request.body['username'].toLowerCase();
-    let login_password = request.body['password'];
-    if (login_username == '' || (typeof users_reg_data[login_username] == 'undefined')) {
-        loginerrors['user_input_error'] = `Please enter a valid username`;
-    }
-    // check if username exists, then check password entered matches password stored
-    if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
-        if (users_reg_data[login_username]['password'] == login_password) {
-            // redirect to the invoice, personalizing the name and email from the user logged in
-            response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&` + params.toString());
-            return; // we're done here, leave the function
-        } else { // if password doesn't match, redirect to the login page and add error msg to array
-            loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
+    app.post("/login", function (request, response) {
+        let params = new URLSearchParams(request.query);
+        // Process login form POST and redirect to logged in page if ok, back to login page if not
+        let login_username = request.body['username'].toLowerCase();
+        let login_password = request.body['password'];
+        if (login_username == '' || (typeof users_reg_data[login_username] == 'undefined')) {
+            response.redirect(`./login?username_error=${login_username}&` + params.toString());
+            loginerrors['user_input_error'] = `Please enter a valid username`;
+        }
+        // check if username exists, then check password entered matches password stored
+        if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
+            if (users_reg_data[login_username]['password'] == login_password) {
+                // redirect to the invoice, personalizing the name and email from the user logged in
+                response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&` + params.toString());
+            } else { // if password doesn't match, redirect to the login page and add error msg to array
+                response.redirect(`./login?username_error=${login_username}&` + params.toString());
+                loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
+
+            }
+        }
+        
+        window.onload = () => {
+        if(params.has('username_error')) {
+            // put username value from qstring back into the username textbox
+            login_form[username].value = params.get('username_error');
+
         }
     }
-    // if we get here there were errors and we need to generate the login page again, this time with the form data that was posted
-    let str = generate_login_page(params, request.body);
-    response.send(str);
-});
+
+        // response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
+
+    });
 
 
-// route all other GET requests to files in public 
-app.use(express.static('./public')); // essentially replaces http-server
+    // route all other GET requests to files in public 
+    app.use(express.static('./public')); // essentially replaces http-server
 
-// start server
-app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
+    // start server
+    app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
 
 
-function generate_login_page(params, form_data = {}) {
-    str = `
+    function generate_login_page() {
+        str = `
         <style>
             body{
                 background-color: pink;
@@ -316,17 +326,13 @@ function generate_login_page(params, form_data = {}) {
         <h1> Hello Kitty Squishmallow Login</h1>
         <form action="?${params.toString()}" method="POST" name="login_form">
         <label style = "margin-right: 198px;" for="username"><strong>Username</strong></label> <br>
-        <input type="text" name="username" size="40" placeholder="enter username" 
-        value="${(typeof form_data['username'] != 'undefined') ? form_data['username'] : ''}"
-        ><br />
+        <input type="text" name="username" size="40" placeholder="enter username" ><br />
         <p id = "errorMessage">
         ${(typeof loginerrors['user_input_error'] != 'undefined') ? loginerrors['user_input_error'] : ''}
         </p>
         <br>
         <label style = "margin-right: 200px;"for="password"><strong>Password</strong></label> <br>
-        <input type="password" name="password" size="40" placeholder="enter password"
-        value="${(typeof form_data['password'] != 'undefined') ? form_data['password'] : ''}"
-        ><br />
+        <input type="password" name="password" size="40" placeholder="enter password"><br />
         <p id = "errorMessage">
         ${(typeof loginerrors['incorrect_password'] != 'undefined') ? loginerrors['incorrect_password'] : ''}
         </p>
@@ -337,6 +343,6 @@ function generate_login_page(params, form_data = {}) {
         </body>
         `;
 
-    return str;
-}
+        return str;
+    }
 
