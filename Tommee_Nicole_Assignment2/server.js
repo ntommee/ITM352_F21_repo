@@ -12,8 +12,7 @@ var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
 
-// get the body
-// if you get a POST request from a URL it will put the request in the body so you can use the data
+// get the body - if you get a POST request from a URL it will put the request in the body so you can use the data
 app.use(express.urlencoded({ extended: true }));
 
 // takes product information from json and stores in var products
@@ -241,40 +240,7 @@ app.post("/register", function (request, response) {
 app.get("/login", function (request, response) {
     // Give a simple login form
     let params = new URLSearchParams(request.query);
-    str = `
-    <style>
-        body{
-            background-color: pink;
-            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-            text-align: center;
-        }
-        h1{
-            margin-top: 30px;
-        }
-        #errorMessage {
-            color: red;
-        }
-        </style>
-    <body>
-    <h1> Hello Kitty Squishmallow Login</h1>
-    <form action="?${params.toString()}" method="POST" name="login_form">
-    <label style = "margin-right: 198px;" for="username"><strong>Username</strong></label> <br>
-    <input type="text" name="username" size="40" placeholder="enter username" ><br />
-    <p id = "errorMessage">
-    ${(typeof loginerrors['user_input_error'] != 'undefined') ? loginerrors['user_input_error'] : ''}
-    </p>
-    <br>
-    <label style = "margin-right: 200px;"for="password"><strong>Password</strong></label> <br>
-    <input type="password" name="password" size="40" placeholder="enter password"><br />
-    <p id = "errorMessage">
-    ${(typeof loginerrors['incorrect_password'] != 'undefined') ? loginerrors['incorrect_password'] : ''}
-    </p>
-    <br>
-    <input type="submit" value="Login" id="submit" style="margin:0px auto; background-color: palevioletred;">
-    </form>
-    <strong> Don't have an account? <a href="./register?${params.toString()}">Register</a> </strong>
-    </body>
-    `;
+    var str = generate_login_page(params);
     response.send(str);
 });
 
@@ -292,13 +258,16 @@ app.post("/login", function (request, response) {
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
             // redirect to the invoice, personalizing the name and email from the user logged in
-            response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&` + params.toString());
+            response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&username=${login_username}&` + params.toString());
+            return; // no other code 
         } else { // if password doesn't match, redirect to the login page and add error msg to array
-            response.redirect(`./login?username_error=${login_username}&` + params.toString());
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
 
         }
     }
+    // if we get here, we have errors so send back to login
+    var str = generate_login_page(params,{"username": login_username});
+    response.send(str);
 });
 
 // route all other GET requests to files in public 
