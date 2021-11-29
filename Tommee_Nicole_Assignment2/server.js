@@ -1,6 +1,6 @@
 /* 
 * Nicole Tommee
-* Displays product data, validates the input, validates login information, and presents an invoice 
+* Displays product data, validates the input, requires & then validates login information, and presents user a personalized invoice.
 * Used code from Lab13 Ex4, Lab 14 Ex4, and Assignment1_MVC_server for guidance
 */
 
@@ -8,40 +8,17 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 
-/* you only need one of these or just use URLSearchParams */
-const QueryString = require('qs');
-const qs = require('querystring');
-
-/* I don't think you need these */
-const { response } = require('express');
-const { concatSeries } = require('async');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
 
-// functions
-function isNonNegInt(q, returnErrors = false) {
-    errors = []; // assume no errors at first
-    if (q == '') q = 0;
-    if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
-    else {
-        if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
-        if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
-    }
-    return returnErrors ? errors : (errors.length == 0);
-}
-
-
 // get the body
+// if you get a POST request from a URL it will put the request in the body so you can use the data
 app.use(express.urlencoded({ extended: true }));
 
 // takes product information from json and stores in var products
 var products = require('./products.json');
 const { URL, URLSearchParams } = require('url');
-// const { text } = require('stream/consumers');
-
-// keep track of quantity sold 
-products.forEach((prod, i) => { prod.total_avail = 0 });
 
 // monitor all requests
 app.all('*', function (request, response, next) {
@@ -56,7 +33,6 @@ app.get("/product_data.js", function (request, response, next) {
     response.send(products_str);
 });
 
-
 app.post("/process_form", function (request, response, next) {
     let POST = request.body;
     let params = new URLSearchParams(request.body);
@@ -69,8 +45,8 @@ app.post("/process_form", function (request, response, next) {
         return;
     }
 
-    // Validations - assume no errors to start
-    var errors = {};
+    // Validations 
+    var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
 
     for (i in products) {
@@ -92,7 +68,7 @@ app.post("/process_form", function (request, response, next) {
         errors['empty' + i] = `Please enter some quantities.`;
     }
 
-
+    // if there are errors, display each error on a new line
     if (Object.keys(errors).length > 0) {
         var errorMessage_str = '';
         for (err in errors) {
@@ -104,17 +80,12 @@ app.post("/process_form", function (request, response, next) {
         for (i = 0; i < products.length; i++) {
             products[i].quantity_available -= Number(POST[`quantity${i}`]);
         }
+        // direct user to login form
         response.redirect('./login?' + params.toString());
     }
 
     // shows in the console the values received 
     console.log(Date.now() + ': Purchase made from ip ' + request.ip + ' data: ' + JSON.stringify(POST));
-
-    //response.redirect('./login');
-
-    //var contents = fs.readFileSync('./invoice.template', 'utf8');
-    //response.send(eval('`' + contents + '`')); // render template string
-
 });
 
 
@@ -124,12 +95,9 @@ if (fs.existsSync(filename)) {
     let user_data_str = fs.readFileSync(filename, 'utf-8'); // reads content of the file and returns as a string
     var users_reg_data = JSON.parse(user_data_str); // parses into oject and stores in users_reg_data
     var file_stats = fs.statSync(filename);
-    console.log(`${filename} has ${file_stats.size} characters`);
 } else {
     console.log(`Hey! ${filename} does not exist!`)
 }
-
-app.use(express.urlencoded({ extended: true })); // if you get a POST request from a URL it will put the request in the body so you can use the data
 
 app.get("/register", function (request, response) {
     let params = new URLSearchParams(request.query);
@@ -182,6 +150,7 @@ app.get("/register", function (request, response) {
         <input type="email" name="email" size="40" placeholder="enter email"><br />
         <p id = "errorMessage">
         ${(typeof errors['no_email'] != 'undefined') ? errors['no_email'] : ''}
+        ${(typeof errors['emailError'] != 'undefined') ? errors['emailError'] : ''}
         </p>
         <br>
         <input type="submit" value="Register" id="submit" style="margin:0px auto; background-color: palevioletred;">
@@ -196,26 +165,26 @@ app.post("/register", function (request, response) {
     errors = {}; // start with no errors
     username = request.body['username'].toLowerCase();
     // process a simple register form
-    if (typeof users_reg_data[username] != 'undefined') {
+    if (typeof users_reg_data[username] != 'undefined') { // if the username already exists
         errors['username_taken'] = `Hey! ${username} is already registered!`;
     }
-    if (request.body.password != request.body.repeat_password) {
+    if (request.body.password != request.body.repeat_password) { //password doesn't match
         errors['password_mismatch'] = `Repeat password not the same as password!`;
     }
 
-    if (request.body.username == '') {
+    if (request.body.username == '') { // no username input
         errors['no_username'] = `You need to enter a username!`;
     }
-    if (request.body.fullname == '') {
+    if (request.body.fullname == '') { // no name input
         errors['no_name'] = `You need to enter a name!`;
     }
-    if (request.body.email == '') {
+    if (request.body.email == '') { // no email input
         errors['no_email'] = `You need to enter an email!`;
     }
 
-
+    // Referenced code from https://www.w3spoint.com/spaces-letters-alphabets-validation-javascript-js
     // Full name - only letters
-    var alphabet = /^[a-z][a-z\s]*$/
+    var alphabet = /^[a-zA-Z\s]*$/;
     if (alphabet.test(request.body.fullname)) {
     } else {
         errors['nameError'] = `Name must have alphabet characters only`;
@@ -226,6 +195,14 @@ app.post("/register", function (request, response) {
     if (letters.test(username)) {
     } else {
         errors['validateUser'] = `Username must have alphabet and numerical characters only`;
+    }
+
+    // Referenced code from https://www.w3resource.com/javascript/form/email-validation.php
+    // Email validation
+    var emailCharacters = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (emailCharacters.test(request.body.email)) {
+    } else {
+        errors['emailError'] = 'Please enter a valid email address in the following format: user@host.com'
     }
 
     // Username must be between 4-10 characters. Already set maxlength to 10, so just make sure it's at least 4 characters
@@ -254,7 +231,7 @@ app.post("/register", function (request, response) {
         // redirect to login page
         response.redirect('./login?' + params.toString());
         console.log("successfully registered") + params.toString();
-    } else {
+    } else { // stay on register page, will show errors
         response.redirect('./register?' + params.toString());
         console.log(errors);
     }
@@ -321,15 +298,7 @@ app.post("/login", function (request, response) {
 
         }
     }
-    // window.onload = () => {
-    if (params.has('username_error')) {
-        // put username value from qstring back into the username textbox
-        login_form[username].value = params.get('username_error');
-    }
 });
-
-
-// response.send('Processing login' + JSON.stringify(request.body)) // request.body holds the username & password (the form data when it got posted)
 
 // route all other GET requests to files in public 
 app.use(express.static('./public')); // essentially replaces http-server
@@ -337,6 +306,17 @@ app.use(express.static('./public')); // essentially replaces http-server
 // start server
 app.listen(8080, () => console.log(`listening on port 8080`)); // note the use of an anonymous function here to do a callback
 
+// functions
+function isNonNegInt(q, returnErrors = false) {
+    errors = []; // assume no errors at first
+    if (q == '') q = 0;
+    if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
+    else {
+        if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
+        if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
+    }
+    return returnErrors ? errors : (errors.length == 0);
+}
 
 function generate_login_page(params, form_data = {}) {
     str = `
@@ -378,5 +358,70 @@ function generate_login_page(params, form_data = {}) {
         </body>
         `;
 
+    return str;
+}
+
+function generate_register_page(params, form_data = {}) {
+    str = `
+    <style>
+    body{
+        text-align: center;
+        background-color: pink;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+    h1{
+        margin-top: 30px;
+    }
+    #errorMessage {
+        color: red;
+    }
+    </style>
+    <body>
+    <h1> Create Your Hello Kitty Squishmallow Account</h1>
+    <form action="?${params.toString()}" method="POST" name="register">
+    <label style = "margin-right: 198px;" for="fullname"><strong>Full Name</strong></label> <br>
+    <input type="text" name="fullname" size="40" placeholder="enter full name" maxlength="30" 
+    value="${(typeof form_data['fullname'] != 'undefined') ? form_data['fullname'] : ''}"
+    ><br />
+    <p id = "errorMessage">
+    ${(typeof errors['no_name'] != 'undefined') ? errors['no_name'] : ''}
+    ${(typeof errors['nameError'] != 'undefined') ? errors['nameError'] : ''}
+    </p>
+    <br>
+    <label style = "margin-right: 30px;" for="username"><strong>Username</strong></label> 
+    <label style = "font-size:12px;" for="username">must be between 4-10 characters</label>
+    <br>
+    <input type="text" name="username" size="40" placeholder="enter username" maxlength="10">
+    value="${(typeof form_data['username'] != 'undefined') ? form_data['username'] : ''}"
+    <br />
+    <p id = "errorMessage">
+    ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
+    ${(typeof errors['username_taken'] != 'undefined') ? errors['username_taken'] : ''}
+    ${(typeof errors['validateUser'] != 'undefined') ? errors['validateUser'] : ''}
+    </p>
+    <br />
+    <label style = "margin-right: 58px;" for="username"><strong>Password</strong></label>
+    <label style = "font-size:12px; text-align: left;" for="username">must be at least 6 characters</label>
+    <br>
+    <input type="password" name="password" size="40" placeholder="enter password"><br />
+    <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
+    <p id = "errorMessage">
+    ${(typeof errors['password_mismatch'] != 'undefined') ? errors['password_mismatch'] : ''}
+    ${(typeof errors['validatePassword'] != 'undefined') ? errors['validatePassword'] : ''}
+    </p>
+    <br />
+    <label style = "margin-right: 235px;" for="username"><strong>Email</strong></label> <br>
+    <input type="email" name="email" size="40" placeholder="enter email">
+    value="${(typeof form_data['email'] != 'undefined') ? form_data['email'] : ''}"
+    <br />
+    <p id = "errorMessage">
+    ${(typeof errors['no_email'] != 'undefined') ? errors['no_email'] : ''}
+    ${(typeof errors['emailError'] != 'undefined') ? errors['emailError'] : ''}
+    </p>
+    <br>
+    <input type="submit" value="Register" id="submit" style="margin:0px auto; background-color: palevioletred;">
+    </form>
+    </body>
+    `;
     return str;
 }
