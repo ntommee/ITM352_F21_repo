@@ -102,61 +102,7 @@ if (fs.existsSync(filename)) {
 app.get("/register", function (request, response) {
     let params = new URLSearchParams(request.query);
     // Give a simple register form
-    str = `
-        <style>
-        body{
-            text-align: center;
-            background-color: pink;
-            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-        }
-        h1{
-            margin-top: 30px;
-        }
-        #errorMessage {
-            color: red;
-        }
-        </style>
-        <body>
-        <h1> Create Your Hello Kitty Squishmallow Account</h1>
-        <form action="?${params.toString()}" method="POST" name="register">
-        <label style = "margin-right: 198px;" for="fullname"><strong>Full Name</strong></label> <br>
-        <input type="text" name="fullname" size="40" placeholder="enter full name" maxlength="30"><br />
-        <p id = "errorMessage">
-        ${(typeof errors['no_name'] != 'undefined') ? errors['no_name'] : ''}
-        ${(typeof errors['nameError'] != 'undefined') ? errors['nameError'] : ''}
-        </p>
-        <br>
-        <label style = "margin-right: 30px;" for="username"><strong>Username</strong></label> 
-        <label style = "font-size:12px;" for="username">must be between 4-10 characters</label>
-        <br>
-        <input type="text" name="username" size="40" placeholder="enter username" maxlength="10"><br />
-        <p id = "errorMessage">
-        ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
-        ${(typeof errors['username_taken'] != 'undefined') ? errors['username_taken'] : ''}
-        ${(typeof errors['validateUser'] != 'undefined') ? errors['validateUser'] : ''}
-        </p>
-        <br />
-        <label style = "margin-right: 58px;" for="username"><strong>Password</strong></label>
-        <label style = "font-size:12px; text-align: left;" for="username">must be at least 6 characters</label>
-        <br>
-        <input type="password" name="password" size="40" placeholder="enter password"><br />
-        <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
-        <p id = "errorMessage">
-        ${(typeof errors['password_mismatch'] != 'undefined') ? errors['password_mismatch'] : ''}
-        ${(typeof errors['validatePassword'] != 'undefined') ? errors['validatePassword'] : ''}
-        </p>
-        <br />
-        <label style = "margin-right: 235px;" for="username"><strong>Email</strong></label> <br>
-        <input type="email" name="email" size="40" placeholder="enter email"><br />
-        <p id = "errorMessage">
-        ${(typeof errors['no_email'] != 'undefined') ? errors['no_email'] : ''}
-        ${(typeof errors['emailError'] != 'undefined') ? errors['emailError'] : ''}
-        </p>
-        <br>
-        <input type="submit" value="Register" id="submit" style="margin:0px auto; background-color: palevioletred;">
-        </form>
-        </body>
-    `;
+    var str = generate_register_page(params);
     response.send(str);
 });
 
@@ -171,7 +117,6 @@ app.post("/register", function (request, response) {
     if (request.body.password != request.body.repeat_password) { //password doesn't match
         errors['password_mismatch'] = `Repeat password not the same as password!`;
     }
-
     if (request.body.username == '') { // no username input
         errors['no_username'] = `You need to enter a username!`;
     }
@@ -230,10 +175,11 @@ app.post("/register", function (request, response) {
         fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
         // redirect to login page
         response.redirect('./login?' + params.toString());
+        return;
         console.log("successfully registered") + params.toString();
-    } else { // stay on register page, will show errors
-        response.redirect('./register?' + params.toString());
-        console.log(errors);
+    } else { // regenerate the register page with sticky form 
+        var str = generate_register_page(params,{"username": username, "fullname":request.body.fullname, "email":request.body.email});
+        response.send(str);
     }
 });
 
@@ -251,7 +197,6 @@ app.post("/login", function (request, response) {
     let login_username = request.body['username'].toLowerCase();
     let login_password = request.body['password'];
     if (login_username == '' || (typeof users_reg_data[login_username] == 'undefined')) {
-        response.redirect(`./login?username_error=${login_username}&` + params.toString());
         loginerrors['user_input_error'] = `Please enter a valid username`;
     }
     // check if username exists, then check password entered matches password stored
@@ -262,7 +207,6 @@ app.post("/login", function (request, response) {
             return; // no other code 
         } else { // if password doesn't match, redirect to the login page and add error msg to array
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
-
         }
     }
     // if we get here, we have errors so send back to login
@@ -327,7 +271,6 @@ function generate_login_page(params, form_data = {}) {
         <strong> Don't have an account? <a href="./register?${params.toString()}">Register</a> </strong>
         </body>
         `;
-
     return str;
 }
 
@@ -361,8 +304,8 @@ function generate_register_page(params, form_data = {}) {
     <label style = "margin-right: 30px;" for="username"><strong>Username</strong></label> 
     <label style = "font-size:12px;" for="username">must be between 4-10 characters</label>
     <br>
-    <input type="text" name="username" size="40" placeholder="enter username" maxlength="10">
-    value="${(typeof form_data['username'] != 'undefined') ? form_data['username'] : ''}"
+    <input type="text" name="username" size="40" placeholder="enter username" maxlength="10"
+    value="${(typeof form_data['username'] != 'undefined') ? form_data['username'] : ''}">
     <br />
     <p id = "errorMessage">
     ${(typeof errors['no_username'] != 'undefined') ? errors['no_username'] : ''}
@@ -381,8 +324,8 @@ function generate_register_page(params, form_data = {}) {
     </p>
     <br />
     <label style = "margin-right: 235px;" for="username"><strong>Email</strong></label> <br>
-    <input type="email" name="email" size="40" placeholder="enter email">
-    value="${(typeof form_data['email'] != 'undefined') ? form_data['email'] : ''}"
+    <input type="email" name="email" size="40" placeholder="enter email"
+    value="${(typeof form_data['email'] != 'undefined') ? form_data['email'] : ''}">
     <br />
     <p id = "errorMessage">
     ${(typeof errors['no_email'] != 'undefined') ? errors['no_email'] : ''}
