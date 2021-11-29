@@ -19,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 // takes product information from json and stores in var products
 var products = require('./products.json');
 const { URL, URLSearchParams } = require('url');
+const { request } = require('http');
 
 // monitor all requests
 app.all('*', function (request, response, next) {
