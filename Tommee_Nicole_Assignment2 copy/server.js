@@ -74,7 +74,7 @@ app.post("/process_form", function (request, response, next) {
         for (err in errors) {
             errorMessage_str += errors[err] + '\n';
         }
-        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&` + QueryString.stringify(POST));
+        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&` + JSON.stringify(POST));
     } else {
         // quantities are valid so remove from inventory
         for (i = 0; i < products.length; i++) {
