@@ -7,7 +7,7 @@
 var express = require('express');
 var app = express();
 var fs = require('fs');
-
+const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
@@ -74,7 +74,7 @@ app.post("/process_form", function (request, response, next) {
         for (err in errors) {
             errorMessage_str += errors[err] + '\n';
         }
-        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&` + JSON.stringify(POST));
+        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&` + QueryString.stringify(POST));
     } else {
         // quantities are valid so remove from inventory
         for (i = 0; i < products.length; i++) {
