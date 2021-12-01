@@ -153,7 +153,6 @@ app.post("/register", function (request, response) {
     // Username must be between 4-10 characters. Already set maxlength to 10, so just make sure it's at least 4 characters
     if (request.body.username.length < 4) {
         errors['validateUser'] = `Username must be at least 4 characters`;
-
     }
 
     // Password should have a minimum of 6 characters 
