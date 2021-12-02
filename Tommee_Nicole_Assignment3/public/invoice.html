@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<script src="./product_data.js" type="text/javascript"></script>
+
+<script>
+  let params = (new URL(document.location)).searchParams;
+  // if no username, no login so send to login
+  if (params.has('username') == false){
+    window.location.href="./products_display.html" + location.search;
+    window.alert ("Please purchase some items before accessing your invoice!");
+  }
+
+  function display_invoice_table_rows() {
+    subtotal = 0;
+    str = '';
+    for (i = 0; i < products.length; i++) {
+      a_qty = 0;
+      // if the quantity is valid, store the quantity in a_qty
+      if (typeof params.get(`quantity${i}`) != 'undefined') {
+        a_qty = params.get(`quantity${i}`);
+      }
+      // if the quantity is greater than 0, carry out calculations for extended price & subtotal
+      if (a_qty > 0) {
+        // product row
+        extended_price = a_qty * products[i].price
+        subtotal += extended_price;
+        str += (`
+          <tr>
+            <td width="43%">${products[i].name}</td>
+            <td align="center" width="11%">${a_qty}</td>
+            <td width="13%">\$${products[i].price}</td>
+            <td width="54%">\$${extended_price.toFixed(2)}</td>
+          </tr>
+          `);
+      }
+    }
+    // Compute tax
+    tax_rate = 0.04;
+    tax = tax_rate * subtotal;
+
+    // Compute shipping
+    if (subtotal <= 45) {
+      shipping = 10;
+    } else if (subtotal <= 100) {
+      shipping = 15;
+    } else {
+      shipping = 0.07 * subtotal; // 7% of subtotal
+    }
+
+    // Compute grand total
+    total = subtotal + tax + shipping;
+
+    document.write(str);
+  }
+
+  /*function display_invoice_table_rows(product_quantities) {
+    for (i in products) {
+      if (product_quantities[i] == 0) continue;
+      extended_price = quantities[i] * products[i].price
+      subtotal += extended_price;
+      document.write(`
+          <tr>
+            <td width="43%">${products[i].name}</td>
+            <td align="center" width="11%">${product_quantities[i]}</td>
+            <td width="13%">\$${products[i].price}</td>
+            <td width="54%">\$${extended_price.toFixed(2)}</td>
+          </tr>
+          `);
+    }
+  }
+  */
+</script>
+
+<style>
+  body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-color: pink;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+  }
+
+
+  .shippingRates {
+    background-color: palevioletred;
+    padding-bottom: 20px;
+    margin-left: -432px;
+    margin-right: -432px;
+    margin-top: 40px;
+  }
+</style>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice</title>
+</head>
+
+<body>
+  <h2>Thank you for your purchase,
+    <script>
+      document.write(params.get('fullname') + "!");
+    </script>
+    <br>
+  </h2>
+
+  <img src="./images/hkwaving.gif" style="width:50%">
+  <table border="2">
+    <tbody style="text-align: center;">
+      <tr style="background-color: palevioletred">
+        <th style="text-align: center;" width="43%">Product Name</th>
+        <th style="text-align: center;" width="11%">Quantity</th>
+        <th style="text-align: center;" width="13%">Price</th>
+        <th style="text-align: center;" width="54%">Extended Price</th>
+      </tr>
+      <script>
+        display_invoice_table_rows();
+
+        document.write(`
+
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="2">Sub-total</td>
+        <td width="54%">$
+          ${subtotal.toFixed(2)}
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+				<td colspan="2">Tax @ ${(100 * tax_rate)}%</td>
+        <td width="54%">$${tax.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"> Shipping </td>       
+        <td width="54%">\$${shipping.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"><strong><span style= "color:green; font-size:20px" >Total</span></strong></td>        
+        <td width="65%"><strong><span style="color:green; font-size:20px">\$${total.toFixed(2)}</span></strong></td>
+      </tr>
+      <tr>
+        <td style="text-align: center;" colspan="4" width="67%"><span style= "font-size:14px">Thank you for your business.</span></td>
+      </tr>
+      `);
+
+      </script>
+    </tbody>
+  </table>
+
+  <strong>
+    <p>
+      A copy of your receipt will be sent to
+      <script>
+        document.write(params.get('email'));
+      </script>
+    </p>
+  </strong>
+
+  <div class="shippingRates"> <b> <br>
+      SHIPPING RATES: <br>
+      A subtotal $0 - $45 will be $10 shipping <br>
+      A subtotal $45 - $99.99 will be $15 shipping <br>
+      Subtotals over $100 will be charged 7% of the subtotal amount
+    </b>
+  </div>
+</body>
+
+</html>
