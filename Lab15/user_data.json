@@ -1,7 +1,7 @@
 {
     "dport": {
-        "password": "test",
-        "email": "test@test.com"
+        "password": "portspassword",
+        "email": "dports@hawaii.edu"
     },
     "kazman": {
         "name": "Rick Kazman",
