@@ -1,0 +1,50 @@
+<head>
+    <script src="./functions.js"></script>
+    <script>
+        var products_data;
+        var total = 0;
+        loadJSON('get_products_data', function (response) {
+            // Parsing JSON string into object
+            products_data = JSON.parse(response);
+        });
+        loadJSON('get_cart', function (response) {
+            // Parsing JSON string into object
+            shopping_cart = JSON.parse(response);
+            for (pk in shopping_cart) {
+                total += shopping_cart[pk].reduce((a, b) => a + b);
+            }
+        });
+
+        // get the query string
+        let params = (new URL(document.location)).searchParams;
+        if (params.has('products_key')) {
+            var this_product_key = params.get('products_key');
+        } else {
+            document.write('no products key in query string');
+            document.stop;
+        }
+        nav_bar(this_product_key, products_data);
+    </script>
+</head>
+<h2>You have <span id="cart_total">0</span> items in your shopping cart</h2>
+<script>
+    cart_total.innerHTML = total;
+    // This function takes a string assumed to be a key in the products array above to display and select the corresponding products
+    var order_str = '';
+
+    order_str += `<h1>Please select what ${this_product_key} you want</h1><br>`;
+    // We put the whole table in the form so that anything entered in it will get submitted
+    order_str += `<FORM action="/add_to_cart" method="GET">
+                <INPUT TYPE="HIDDEN" NAME="products_key" VALUE="${this_product_key}">
+                    <TABLE BORDER>
+                        <TR><TD><B><BIG>Description</TD><TD><B><BIG>Price</TD><TD><B><BIG>Quantity Desired</TD></TR>`;
+    products = products_data[this_product_key];
+    for (i = 0; i < products.length; i++) {
+        order_str += `<TR><TD>${products[i]['name']}</TD><TD>${products[i]['price']}</TD><TD>
+                    <INPUT TYPE="TEXT"  name="quantities[${i}]" value="${(typeof shopping_cart[this_product_key] != 'undefined') ? shopping_cart[products_key][i] : 0}"></TD></TR>`;
+    }
+    order_str += `</TABLE><br>
+    <INPUT TYPE="SUBMIT"  name="Submit" value="Select">
+    </FORM>`;
+    document.write(order_str);
+</script>
