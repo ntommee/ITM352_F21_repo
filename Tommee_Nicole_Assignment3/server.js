@@ -55,48 +55,48 @@ app.get("/get_cart", function (request, response) {
 
 app.get("/checkout", function (request, response) {
     // Generate HTML invoice string
-      var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
-      var shopping_cart = request.session.cart;
-      for(product_key in products_data) {
-        for(i=0; i<products_data[product_key].length; i++) {
-            if(typeof shopping_cart[product_key] == 'undefined') continue;
+    var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
+    var shopping_cart = request.session.cart;
+    for (product_key in products_data) {
+        for (i = 0; i < products_data[product_key].length; i++) {
+            if (typeof shopping_cart[product_key] == 'undefined') continue;
             qty = shopping_cart[product_key][i];
-            if(qty > 0) {
-              invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
+            if (qty > 0) {
+                invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
             }
         }
     }
-      invoice_str += '</table>';
+    invoice_str += '</table>';
     // Set up mail server. Only will work on UH Network due to security restrictions
-      var transporter = nodemailer.createTransport({
+    var transporter = nodemailer.createTransport({
         host: "mail.hawaii.edu",
         port: 25,
         secure: false, // use TLS
         tls: {
-          // do not fail on invalid certs
-          rejectUnauthorized: false
+            // do not fail on invalid certs
+            rejectUnauthorized: false
         }
-      });
-    
-      var user_email = 'phoney@mt2015.com';
-      var mailOptions = {
+    });
+
+    var user_email = 'phoney@mt2015.com';
+    var mailOptions = {
         from: 'phoney_store@bogus.com',
         to: user_email,
         subject: 'Your phoney invoice',
         html: invoice_str
-      };
-    
-      transporter.sendMail(mailOptions, function(error, info){
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-          invoice_str += '<br>There was an error and your invoice could not be emailed :(';
+            invoice_str += '<br>There was an error and your invoice could not be emailed :(';
         } else {
-          invoice_str += `<br>Your invoice was mailed to ${user_email}`;
+            invoice_str += `<br>Your invoice was mailed to ${user_email}`;
         }
         response.send(invoice_str);
-      });
-     
     });
-    
+
+});
+
 
 // routing
 app.get("/product_data.js", function (request, response, next) {
@@ -306,9 +306,10 @@ function isNonNegInt(q, returnErrors = false) {
 function generate_login_page(params, form_data = {}) {
     str = `
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
             body{
                 background-color: pink;
-                font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                font-family: 'Montserrat', sans-serif;
                 text-align: center;
             }
             h1{
@@ -321,7 +322,7 @@ function generate_login_page(params, form_data = {}) {
         <body>
         <h1> Hello Kitty Squishmallow Login</h1>
         <form action="?${params.toString()}" method="POST" name="login_form">
-        <label style = "margin-right: 198px;" for="username"><strong>Username</strong></label> <br>
+        <label style = "margin-right: 193px;" for="username"><strong>Username</strong></label> <br>
         <input type="text" name="username" size="40" placeholder="enter username" 
         value="${(typeof form_data['username'] != 'undefined') ? form_data['username'] : ''}"
         ><br />
@@ -337,7 +338,7 @@ function generate_login_page(params, form_data = {}) {
         ${(typeof loginerrors['incorrect_password'] != 'undefined') ? loginerrors['incorrect_password'] : ''}
         </p>
         <br>
-        <input type="submit" value="Login" id="submit" style="margin:0px auto; background-color: palevioletred;">
+        <input type="submit" value="Login" id="submit" style="margin:0px auto; background-color: palevioletred;font-family: 'Montserrat', sans-serif;">
         </form>
         <strong> Don't have an account? <a href="./register?${params.toString()}">Register</a> </strong>
         </body>
@@ -348,10 +349,11 @@ function generate_login_page(params, form_data = {}) {
 function generate_register_page(params, form_data = {}) {
     str = `
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
     body{
         text-align: center;
         background-color: pink;
-        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-family: 'Montserrat', sans-serif;
     }
     h1{
         margin-top: 30px;
@@ -363,7 +365,7 @@ function generate_register_page(params, form_data = {}) {
     <body>
     <h1> Create Your Hello Kitty Squishmallow Account</h1>
     <form action="?${params.toString()}" method="POST" name="register">
-    <label style = "margin-right: 198px;" for="fullname"><strong>Full Name</strong></label> <br>
+    <label style = "margin-right: 190px;" for="fullname"><strong>Full Name</strong></label> <br>
     <input type="text" name="fullname" size="40" placeholder="enter full name" maxlength="30" 
     value="${(typeof form_data['fullname'] != 'undefined') ? form_data['fullname'] : ''}"
     ><br />
@@ -372,8 +374,8 @@ function generate_register_page(params, form_data = {}) {
     ${(typeof errors['nameError'] != 'undefined') ? errors['nameError'] : ''}
     </p>
     <br>
-    <label style = "margin-right: 30px;" for="username"><strong>Username</strong></label> 
-    <label style = "font-size:12px;" for="username">must be between 4-10 characters</label>
+    <label style = "margin-right: 40px;" for="username"><strong>Username</strong></label> 
+    <label style = "font-size:12px;" for="username"> between 4-10 characters</label>
     <br>
     <input type="text" name="username" size="40" placeholder="enter username" maxlength="10"
     value="${(typeof form_data['username'] != 'undefined') ? form_data['username'] : ''}">
@@ -384,8 +386,8 @@ function generate_register_page(params, form_data = {}) {
     ${(typeof errors['validateUser'] != 'undefined') ? errors['validateUser'] : ''}
     </p>
     <br />
-    <label style = "margin-right: 58px;" for="username"><strong>Password</strong></label>
-    <label style = "font-size:12px; text-align: left;" for="username">must be at least 6 characters</label>
+    <label style = "margin-right: 70px;" for="username"><strong>Password</strong></label>
+    <label style = "font-size:12px; text-align: left;" for="username"> at least 6 characters</label>
     <br>
     <input type="password" name="password" size="40" placeholder="enter password"><br />
     <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
@@ -403,7 +405,8 @@ function generate_register_page(params, form_data = {}) {
     ${(typeof errors['emailError'] != 'undefined') ? errors['emailError'] : ''}
     </p>
     <br>
-    <input type="submit" value="Register" id="submit" style="margin:0px auto; background-color: palevioletred;">
+    <input type="submit" value="Register" id="submit" style="margin:0px auto; background-color: palevioletred; 
+    font-family: 'Montserrat', sans-serif;">
     </form>
     </body>
     `;
