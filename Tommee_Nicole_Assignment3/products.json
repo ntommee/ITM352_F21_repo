@@ -1,5 +1,5 @@
     {
-        "HK20": [
+        "20 Inch Hello Kitty": [
             {
                 "name": "20 Inch Floral",
                 "price": 40.00,
@@ -25,7 +25,7 @@
                 "quantity_available": 4
             }
         ],
-        "HK12": [
+        "12 Inch Hello Kitty": [
             {
                 "name": "12 Inch Red",
                 "price": 22.00,
@@ -51,53 +51,53 @@
                 "quantity_available": 2
             }
         ],
-        "myMelody12": [
+        "12 Inch My Melody": [
             {
-                "name": "12 Inch Salmon",
+                "name": "Light Pink",
                 "price": 22.00,
                 "image": "MyMelody1.jpg",
                 "quantity_available": 4
             },
             {
-                "name": "12 Inch Watermelon",
+                "name": "Watermelon",
                 "price": 22.00,
                 "image": "MyMelody2.jpg",
                 "quantity_available": 6
             },
             {
-                "name": "12 Inch Hot Pink",
+                "name": "Hot Pink",
                 "price": 22.00,
                 "image": "MyMelody3.jpg",
                 "quantity_available": 2
             },
             {
-                "name": "12 Inch Baby Pink",
+                "name": "Baby Pink",
                 "price": 22.00,
                 "image": "MyMelody4.jpg",
                 "quantity_available": 4
             }
         ],
-        "other12": [
+        "12 Inch Other Characters": [
             {
-                "name": "12 Inch Pompompurin Burger",
+                "name": "Pompompurin Burger",
                 "price": 22.00,
                 "image": "Other1.jpg",
                 "quantity_available": 4
             },
             {
-                "name": "12 Inch Tuxedo Sam Ice Cream",
+                "name": "Tuxedo Sam Ice Cream",
                 "price": 22.00,
                 "image": "Other2.jpg",
                 "quantity_available": 6
             },
             {
-                "name": "12 Inch Pompompurin Ice Cream",
+                "name": "Pompompurin Ice Cream",
                 "price": 22.00,
                 "image": "Other3.jpg",
                 "quantity_available": 2
             },
             {
-                "name": "12 Inch Tuxedo Sam Milk Shake",
+                "name": "Tuxedo Sam Milk Shake",
                 "price": 22.00,
                 "image": "Other4.jpg",
                 "quantity_available": 4

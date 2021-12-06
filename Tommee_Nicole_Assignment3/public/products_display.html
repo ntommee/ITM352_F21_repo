@@ -1,4 +1,9 @@
-<!-- Template Adapted from W3 Schools -->
+<!-- 
+    Author: Nicole Tommee
+    Displays all products along with the quantity available and the price of each item
+    Referenced code from Assignment 3 examples
+    Template Adapted from W3 Schools
+-->
 
 <script src="./product_data.js" type="text/javascript"></script>
 
@@ -35,14 +40,6 @@
     // if there are errors, display all the errors 
     document.getElementById(theTextbox.name + '_label').innerHTML = errors_array.join(", ");
   }
-
-  function w3_open() {
-    document.getElementById("mySidebar").style.display = "block";
-  }
-
-  function w3_close() {
-    document.getElementById("mySidebar").style.display = "none";
-  }
 </script>
 
 <!DOCTYPE html>
@@ -68,16 +65,40 @@
   }
 </style>
 
+<head>
+    <script src="./functions.js"></script>
+    
+    <script>
+        // get the query string
+        if (params.has('products_key')) {
+            var products_key = params.get('products_key');
+        } else {
+            document.write('no products key in query string');
+            document.stop;
+        }
+        var products_data;
+        loadJSON('get_products_data', function (response) {
+            // Parsing JSON string into object
+            products_data = JSON.parse(response);
+        });
+    </script>
+</head>
+
 <body>
   <!-- Header -->
-  <div class="w3-top">
-    <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-      <div class="w3-center w3-padding-16">Nicole's Hello Kitty Squishmallow Store</div>
-    </div>
-  </div>
+      <h1 style="text-align: center; padding: 25px">Nicole's Hello Kitty Squishmallow Store</h1>
+      <h5 style="text-align: center; color: palevioletred;"><script> nav_bar(products_key, products_data);</script></h5>      
+<script>
+
+  // This function takes a string assumed to be a key in the products array above to display and select the corresponding products
+  // var order_str = '';
+
+  // get the particular products to display
+  products = products_data[products_key];
+</script>
 
   <!-- Spaces out the margins of the page content -->
-  <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
+  <!--<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px"> -->
 
     <!-- displays the product listings with image, name, price, and quantity available -->
     <!-- also displays text box for user to enter quantity & checks input -->
