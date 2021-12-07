@@ -3,8 +3,8 @@ var express = require('express');
 const { response } = require('express');
 var app = express();
 
-// var cookieParser = require('cookie-parser');
-// app.use(cookieParser()); // makes it middleware - takes the cookie data and puts it into the cookie object
+var cookieParser = require('cookie-parser');
+app.use(cookieParser()); // makes it middleware - takes the cookie data and puts it into the cookie object
 
 
 // put these two lines in assignment 3 first 
@@ -36,7 +36,7 @@ app.get('/set_cookie', function (request, response) {
     // this will send a cookie to the requester
     // cookie is data that is sent in response to a request 
     // cookie can only be sent in a response
-    response.cookie('name', 'Nicole', {maxAge: 5*1000});
+    response.cookie('name', 'Nicole', {maxAge: 15*1000});
     response.send('The name cookie has been sent!')
 });
 
@@ -123,7 +123,7 @@ app.post("/login", function (request, response) {
     // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
-            request.session['last login'] = (new Date()).toISOString(); // put login date into session 
+            request.session['lastLogin'] = (new Date()).toISOString(); // put login date into session 
             // all you have to do is put in a key and a value ^
             response.cookie('username', login_username);
             response.send(` ${login_username} is logged in. You last logged in on ${last_login}`);

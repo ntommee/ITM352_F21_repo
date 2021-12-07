@@ -21,7 +21,7 @@ app.get('/set_cookie', function (request, response) {
     // this will send a cookie to the requester
     // cookie is data that is sent in response to a request 
     // cookie can only be sent in a response
-    response.cookie('name', 'Nicole', {maxAge: 5*1000});
+    response.cookie('name', 'Nicole', {maxAge: 15*1000});
     response.send('The name cookie has been sent!')
 });
 
