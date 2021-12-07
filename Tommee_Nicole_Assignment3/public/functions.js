@@ -1,4 +1,8 @@
-// Referenced code from Assignment 3 examples
+/*
+* Author: Nicole Tommee
+* Functions for loading JSON & creating navigation bar
+* Referenced code from Assignment 3 examples
+*/
 
 // This function asks the server for a "service" and converts the response to text. 
 function loadJSON(service, callback) {   
