@@ -6,12 +6,17 @@ var app = express();
 // var cookieParser = require('cookie-parser');
 // app.use(cookieParser()); // makes it middleware - takes the cookie data and puts it into the cookie object
 
+
+// put these two lines in assignment 3 first 
 var session = require('express-session');
 app.use(session({secret: "MySecretKey", resave: true, saveUninitialized: true})); // starts a session automatically 
 
 // cookie parser is built into sessions
 
 // when you create a session you need a unique ID, and if you don't tell it how to be generated, it will automatically generate one and then send a session ID as a cookie 
+// any request will make a session automatically 
+
+// will automatically associate the session ID with the session stored
 
 // whenever you come back, it uses the session ID cookie to identify the user?
 // for shopping cart when they want something add it to the shopping cart and then when they're ready to checkout, grab the product quantity from the session 
@@ -86,9 +91,15 @@ app.post("/register", function (request, response) {
 });
 
 app.get("/login", function (request, response) {
+    // check if already logged in by seeing if the username cookie exists
+    var welcome_str = 'Welcome! You need to login.'
+    if (typeof request.cookies['username'] != 'undefined') {
+        welcome_str = `Welcome ${request.cookies['username']}! You logged in last on ${request.session['last_login']}`;
+    }
     // Give a simple login form
     str = `
 <body>
+${welcome_str}<br>
 <form action="" method="POST">
 <input type="text" name="username" size="40" placeholder="enter username" ><br />
 <input type="password" name="password" size="40" placeholder="enter password"><br />
@@ -100,20 +111,22 @@ app.get("/login", function (request, response) {
 });
 
 app.post("/login", function (request, response) {
+    // Get last login time from session if it exists. If not, create first login
+    var last_login = 'first login!';
+    if (typeof request.session.lastLogin != 'undefined') { // // do we have last login? if yes then the last login is the value of the last login
+        last_login = request.session.lastLogin;
+    }
+
     // Process login form POST and redirect to logged in page if ok, back to login page if not
     let login_username = request.body['username'];
     let login_password = request.body['password'];
     // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
-            if(typeof request.session['last login'] != 'undefined') { // do we have last login? if yes then the last login is the value of the last login
-                var last_login = request.session['last login'];
-            } else { // if not set the last login to first login
-                var last_login = 'First login!';
-            }
             request.session['last login'] = (new Date()).toISOString(); // put login date into session 
             // all you have to do is put in a key and a value ^
-            response.send(`You last logged in on ${last_login}`);
+            response.cookie('username', login_username);
+            response.send(` ${login_username} is logged in. You last logged in on ${last_login}`);
         } else {
             response.redirect(`./login?err=incorrect password for ${login_username} `);
         }
