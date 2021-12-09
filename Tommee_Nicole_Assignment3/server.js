@@ -73,8 +73,6 @@ app.post("/process_form", function (request, response, next) {
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
 
-
-
     for (product_key in products_data) {
         for (i = 0; i < products_data[product_key].length; i++) {
             q = POST['quantity' + i];
