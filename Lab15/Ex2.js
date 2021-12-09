@@ -48,7 +48,7 @@ app.get('/use_cookie', function (request, response) {
 
 app.get('/use_session', function (request, response) {
     response.send(`Welcome, your session ID is ${request.session.id}`);
-
+    session.destroy();
 });
 
 app.get("/", function (request, response) {
@@ -94,7 +94,7 @@ app.get("/login", function (request, response) {
     // check if already logged in by seeing if the username cookie exists
     var welcome_str = 'Welcome! You need to login.'
     if (typeof request.cookies['username'] != 'undefined') {
-        welcome_str = `Welcome ${request.cookies['username']}! You logged in last on ${request.session['last_login']}`;
+        welcome_str = `Welcome ${request.cookies['username']}! You logged in last on ${request.session['lastLogin']}`;
     }
     // Give a simple login form
     str = `
