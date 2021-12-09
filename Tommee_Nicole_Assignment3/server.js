@@ -49,55 +49,6 @@ app.get("/add_to_cart", function (request, response) {
     response.redirect('./invoice.html');
 });
 
-app.get("/get_cart", function (request, response) {
-    response.json(request.session.cart);
-});
-
-app.get("/checkout", function (request, response) {
-    // Generate HTML invoice string
-    var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
-    var shopping_cart = request.session.cart;
-    for (product_key in products_data) {
-        for (i = 0; i < products_data[product_key].length; i++) {
-            if (typeof shopping_cart[product_key] == 'undefined') continue;
-            qty = shopping_cart[product_key][i];
-            if (qty > 0) {
-                invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
-            }
-        }
-    }
-    invoice_str += '</table>';
-    // Set up mail server. Only will work on UH Network due to security restrictions
-    var transporter = nodemailer.createTransport({
-        host: "mail.hawaii.edu",
-        port: 25,
-        secure: false, // use TLS
-        tls: {
-            // do not fail on invalid certs
-            rejectUnauthorized: false
-        }
-    });
-
-    var user_email = 'phoney@mt2015.com';
-    var mailOptions = {
-        from: 'phoney_store@bogus.com',
-        to: user_email,
-        subject: 'Your phoney invoice',
-        html: invoice_str
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            invoice_str += '<br>There was an error and your invoice could not be emailed :(';
-        } else {
-            invoice_str += `<br>Your invoice was mailed to ${user_email}`;
-        }
-        response.send(invoice_str);
-    });
-
-});
-
-
 // routing
 app.get("/product_data.js", function (request, response, next) {
     response.type('.js');
@@ -108,6 +59,7 @@ app.get("/product_data.js", function (request, response, next) {
 app.post("/process_form", function (request, response, next) {
     let POST = request.body;
     let params = new URLSearchParams(request.body);
+    var products_key = request.query['products_key']; // get the product key sent from the form post
 
     // if error with submit value, show error message
     if (typeof POST['purchase_submit'] == 'undefined') {
@@ -121,18 +73,22 @@ app.post("/process_form", function (request, response, next) {
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
 
-    for (i in products) {
-        q = POST['quantity' + i];
-        if (isNonNegInt(q) == false) {
-            errors['invalid' + i] = `${q} is not a valid quantity for ${products[i].name}`;
-        }
 
-        if (q > products[i].quantity_available) {
-            errors['quantity' + i] = `${q} items are not available for ${products[i].name}`;
-        }
-        if (q > 0) {
-            empty = false;
-            console.log("Some quantities inputted.")
+
+    for (product_key in products_data) {
+        for (i = 0; i < products_data[product_key].length; i++) {
+            q = POST['quantity' + i];
+            if (isNonNegInt(q) == false) {
+                errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[product_key][i].name}`;
+            }
+
+            if (q > products_data[product_key][i].quantity_available) {
+                errors['quantity' + i] = `${q} items are not available for ${products_data[product_key][i].name}`;
+            }
+            if (q > 0) {
+                empty = false;
+                console.log("Some quantities inputted.")
+            }
         }
     }
     // if no quantities entered
@@ -146,11 +102,11 @@ app.post("/process_form", function (request, response, next) {
         for (err in errors) {
             errorMessage_str += errors[err] + '\n';
         }
-        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&` + QueryString.stringify(POST));
+        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&products_key=${products_key}&` + QueryString.stringify(POST));
     } else {
         // quantities are valid so remove from inventory
-        for (i = 0; i < products.length; i++) {
-            products[i].quantity_available -= Number(POST[`quantity${i}`]);
+        for (i = 0; i < products_data[product_key].length; i++) {
+            products_data[product_key][i].quantity_available -= Number(POST[`quantity${i}`]);
         }
         // direct user to login form
         response.redirect('./login?' + params.toString());
