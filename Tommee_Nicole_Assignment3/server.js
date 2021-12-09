@@ -28,7 +28,7 @@ app.all('*', function (request, response, next) {
 app.use(express.urlencoded({ extended: true }));
 
 // takes product information from json and stores in var products
-var products = require('./products.json');
+// var products = require('./products.json');
 const { URL, URLSearchParams } = require('url');
 const { request } = require('http');
 
@@ -73,15 +73,15 @@ app.post("/process_form", function (request, response, next) {
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
 
-    for (product_key in products_data) {
-        for (i = 0; i < products_data[product_key].length; i++) {
+    for (products_key in products_data) {
+        for (i = 0; i < products_data[products_key].length; i++) {
             q = POST['quantity' + i];
             if (isNonNegInt(q) == false) {
-                errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[product_key][i].name}`;
+                errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
             }
 
-            if (q > products_data[product_key][i].quantity_available) {
-                errors['quantity' + i] = `${q} items are not available for ${products_data[product_key][i].name}`;
+            if (q > products_data[products_key][i].quantity_available) {
+                errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
             }
             if (q > 0) {
                 empty = false;
@@ -103,8 +103,8 @@ app.post("/process_form", function (request, response, next) {
         response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&products_key=${products_key}&` + QueryString.stringify(POST));
     } else {
         // quantities are valid so remove from inventory
-        for (i = 0; i < products_data[product_key].length; i++) {
-            products_data[product_key][i].quantity_available -= Number(POST[`quantity${i}`]);
+        for (i = 0; i < products_data[products_key].length; i++) {
+            products_data[products_key][i].quantity_available -= Number(POST[`quantity${i}`]);
         }
         // direct user to login form
         response.redirect('./login?' + params.toString());

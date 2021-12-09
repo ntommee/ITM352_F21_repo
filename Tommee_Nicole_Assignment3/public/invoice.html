@@ -9,7 +9,22 @@
     window.location.href = "./products_display.html" + location.search;
     window.alert("Please add some items before accessing your cart!");
   }
-  
+
+    // get the query string
+    if (params.has('products_key')) {
+      var products_key = params.get('products_key');
+    } else {
+      document.write('no products key in query string');
+      document.stop;
+    }
+    var products_data;
+    loadJSON('get_products_data', function (response) {
+      // Parsing JSON string into object
+      products_data = JSON.parse(response);
+    });
+
+    products = products_data[products_key]; // get the particular products to display
+
   function display_invoice_table_rows() {
     subtotal = 0;
     str = '';
