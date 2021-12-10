@@ -1,7 +1,6 @@
 /* 
 * Nicole Tommee
-* Displays product data, validates the input, requires quantity_available) {
-            & then validates login information, and presents user a personalized invoice.
+* Displays product data, validates the input, & then validates login information, and presents user a personalized invoice.
 * Used code from Lab13 Ex4, Lab 14 Ex4, Assignment1_MVC_server, and Assignemnt 3 Examples for guidance
 */
 
@@ -46,6 +45,10 @@ app.post("/get_products_data", function (request, response) {
     response.json(products_data);
 });
 
+app.get("/get_cart", function (request, response) {
+    response.json(request.session.cart);
+});
+
 
 // routing
 app.get("/product_data.js", function (request, response, next) {
@@ -63,44 +66,48 @@ app.post("/add_to_cart", function (request, response, next) {
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
 
-        for (let i in products_data[products_key]) {
-            q = POST['quantity' + i];
-            if (isNonNegInt(q) == false) {
-                errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
-            }
-
-            if (q > products_data[products_key][i]) {
-              errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
-            }
-            if (q > 0) {
-                empty = false;
-                console.log("Some quantities inputted.")
-            }
-    // if no quantities entered
-    if (empty == true) {
-        errors['empty' + i] = `Please enter some quantities.`;
-    }
-}
-
-    // if there are no errors, put quanties into session.cart
-    if(Object.keys(errors).length == 0) {
-        // combine with cart
-     //   for (let i in products_data[products_key]) {
-
-    //    }
-        if(typeof request.session.cart == 'undefined' ) {
-            request.session.cart = {};
+    for (let i in products_data[products_key]) {
+        q = POST['quantity' + i];
+        if (isNonNegInt(q) == false) {
+            errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
         }
-        request.session.cart[products_key] = request.body;
-        console.log(request.session);
+
+        if (q > products_data[products_key][i].quantity_available) {
+            errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
+        }
+        if (q > 0) {
+            empty = false;
+            console.log("Some quantities inputted.")
+        } else if ((typeof errors['invalid'+ i] != 'undefined') && (typeof errors['quantity'+i] != 'undefined')){
+            errors['empty'] = `Please enter some quantities.`;
+            console.log("Please enter some quantities.");
+        }
     }
-    // go back to product page
+    
+    // if there are errors, display each error on a new line
+    if (Object.keys(errors).length > 0) {
+        var errorMessage_str = '';
+        for (err in errors) {
+            errorMessage_str += errors[err] + '\n';
+        }
+        // response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&` + JSON.stringify(POST));
+        let params = new URLSearchParams(request.body);
+        params.append('errorMessage', errorMessage_str);
+        response.redirect(`./products_display.html?${params.toString()}`);
+    } else {
+        // if there are no errors, put quanties into session.cart
+            if (typeof request.session.cart == 'undefined') {
+                request.session.cart = {}; // creates a new cart if there isn't already one 
+            }
+            request.session.cart[products_key] = request.body;
+            console.log(request.session);
+        // go back to product page
+        let params = new URLSearchParams(request.body);
+        // params.append('errors', JSON.stringify(errors));
+    }
     let params = new URLSearchParams(request.body);
-    params.append('errors', JSON.stringify(errors));
     params.append('products_key', products_key);
-
     response.redirect(`./products_display.html?${params.toString()}`);
-
 });
 
 
@@ -112,6 +119,10 @@ if (fs.existsSync(filename)) {
     var file_stats = fs.statSync(filename);
 } else {
     console.log(`Hey! ${filename} does not exist!`)
+}
+
+app.post("/purchase_items"), function(request,response){
+    response.redirect("./invoice.html");
 }
 
 app.get("/register", function (request, response) {
@@ -216,7 +227,7 @@ app.post("/login", function (request, response) {
     // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
-            response.cookie('username', login_username); 
+            response.cookie('username', login_username);
             console.log(`${request.cookies} is logged in`); // work on being able to display this user on the products_display page
             // redirect to the invoice, personalizing the name and email from the user logged in
             response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}&fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&username=${login_username}&` + params.toString());
