@@ -60,14 +60,14 @@ app.get("/product_data.js", function (request, response, next) {
 app.post("/add_to_cart", function (request, response, next) {
     let POST = request.body;
     var products_key = request.body['products_key']; // get the product key sent from the form post
-    console.log(products_key)
-
     // Validations 
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
+    var quantity_array = [];
 
     for (let i in products_data[products_key]) {
         q = POST['quantity' + i];
+
         if (isNonNegInt(q) == false) {
             errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
         }
@@ -78,12 +78,12 @@ app.post("/add_to_cart", function (request, response, next) {
         if (q > 0) {
             empty = false;
             console.log("Some quantities inputted.")
-        } else if ((typeof errors['invalid'+ i] != 'undefined') && (typeof errors['quantity'+i] != 'undefined')){
+        } else if ((typeof errors['invalid' + i] != 'undefined') && (typeof errors['quantity' + i] != 'undefined')) {
             errors['empty'] = `Please enter some quantities.`;
             console.log("Please enter some quantities.");
         }
     }
-    
+
     // if there are errors, display each error on a new line
     if (Object.keys(errors).length > 0) {
         var errorMessage_str = '';
@@ -96,14 +96,15 @@ app.post("/add_to_cart", function (request, response, next) {
         response.redirect(`./products_display.html?${params.toString()}`);
     } else {
         // if there are no errors, put quanties into session.cart
-            if (typeof request.session.cart == 'undefined') {
-                request.session.cart = {}; // creates a new cart if there isn't already one 
-            }
-            request.session.cart[products_key] = request.body;
-            console.log(request.session);
-        // go back to product page
-        let params = new URLSearchParams(request.body);
-        // params.append('errors', JSON.stringify(errors));
+        if (typeof request.session.cart == 'undefined') {
+            request.session.cart = {}; // creates a new cart if there isn't already one 
+        }
+        for (let i in products_data[products_key]) {
+            quantity_array[i] = POST['quantity' + i];
+            var quantities = quantity_array.map(Number);
+            request.session.cart[products_key] = quantities;
+        }
+        console.log(request.session);
     }
     let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
@@ -121,7 +122,7 @@ if (fs.existsSync(filename)) {
     console.log(`Hey! ${filename} does not exist!`)
 }
 
-app.post("/purchase_items"), function(request,response){
+app.post("/purchase_items"), function (request, response) {
     response.redirect("./invoice.html");
 }
 
