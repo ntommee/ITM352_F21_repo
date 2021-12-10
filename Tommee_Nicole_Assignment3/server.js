@@ -100,7 +100,8 @@ app.post("/add_to_cart", function (request, response, next) {
             request.session.cart = {}; // creates a new cart if there isn't already one 
         }
         for (let i in products_data[products_key]) {
-            quantity_array[i] = POST['quantity' + i];
+            quantity_requested = POST['quantity' + i]
+            quantity_array[i] =quantity_requested;
             var quantities = quantity_array.map(Number);
             request.session.cart[products_key] = quantities;
         }
