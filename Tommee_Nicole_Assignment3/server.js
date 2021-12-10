@@ -1,6 +1,7 @@
 /* 
 * Nicole Tommee
-* Displays product data, validates the input, requires & then validates login information, and presents user a personalized invoice.
+* Displays product data, validates the input, requires quantity_available) {
+            & then validates login information, and presents user a personalized invoice.
 * Used code from Lab13 Ex4, Lab 14 Ex4, Assignment1_MVC_server, and Assignemnt 3 Examples for guidance
 */
 
@@ -55,61 +56,51 @@ app.get("/product_data.js", function (request, response, next) {
 
 app.post("/add_to_cart", function (request, response, next) {
     let POST = request.body;
-    let params = new URLSearchParams(request.body);
-    var products_key = request.query['products_key']; // get the product key sent from the form post
+    var products_key = request.body['products_key']; // get the product key sent from the form post
     console.log(products_key)
-
-    // if error with submit value, show error message
-    if (typeof POST['purchase_submit'] == 'undefined') {
-        response.send("Please purchase some items first!");
-        console.log('No purchase form data');
-        next();
-        return;
-    }
 
     // Validations 
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
 
-    for (products_key in products_data) {
-        for (i = 0; i < products_data[products_key].length; i++) {
+        for (let i in products_data[products_key]) {
             q = POST['quantity' + i];
             if (isNonNegInt(q) == false) {
                 errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
             }
 
-            if (q > products_data[products_key][i].quantity_available) {
-                errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
+            if (q > products_data[products_key][i]) {
+              errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
             }
             if (q > 0) {
                 empty = false;
                 console.log("Some quantities inputted.")
             }
-        }
-    }
     // if no quantities entered
     if (empty == true) {
         errors['empty' + i] = `Please enter some quantities.`;
     }
+}
 
-    // if there are errors, display each error on a new line
-    if (Object.keys(errors).length > 0) {
-        var errorMessage_str = '';
-        for (err in errors) {
-            errorMessage_str += errors[err] + '\n';
+    // if there are no errors, put quanties into session.cart
+    if(Object.keys(errors).length == 0) {
+        // combine with cart
+     //   for (let i in products_data[products_key]) {
+
+    //    }
+        if(typeof request.session.cart == 'undefined' ) {
+            request.session.cart = {};
         }
-        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&products_key=${products_key}&` + QueryString.stringify(POST));
-    } else {
-        // quantities are valid so remove from inventory
-        for (i = 0; i < products_data[products_key].length; i++) {
-            products_data[products_key][i].quantity_available -= Number(POST[`quantity${i}`]);
-        }
-        // direct user to login form
-        response.redirect(`./login?products_key=${products_key}&` + params.toString());
+        request.session.cart[products_key] = request.body;
+        console.log(request.session);
     }
+    // go back to product page
+    let params = new URLSearchParams(request.body);
+    params.append('errors', JSON.stringify(errors));
+    params.append('products_key', products_key);
 
-    // shows in the console the values received 
-    console.log(Date.now() + ': Purchase made from ip ' + request.ip + ' data: ' + JSON.stringify(POST));
+    response.redirect(`./products_display.html?${params.toString()}`);
+
 });
 
 

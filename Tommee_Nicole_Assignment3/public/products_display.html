@@ -111,6 +111,7 @@
     <form action="/add_to_cart" name="product_selection_form" method="POST">
       <main>
         <script>
+          document.write(`<input type = "hidden" name="products_key" value="${products_key}">`);
           for (i = 0; i < products.length; i++) {
             document.write(`
               <div class="w3-quarter">
