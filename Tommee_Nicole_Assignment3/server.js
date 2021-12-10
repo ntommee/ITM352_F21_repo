@@ -11,10 +11,12 @@ const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
+var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var products_data = require('./products.json');
 
 app.use(session({ secret: "MySecretKey", resave: true, saveUninitialized: true }));
+
 
 app.all('*', function (request, response, next) {
     console.log(`Got a ${request.method} to path ${request.path}`);
@@ -31,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 // var products = require('./products.json');
 const { URL, URLSearchParams } = require('url');
 const { request } = require('http');
+const { cookie } = require('express/lib/response');
 
 // monitor all requests
 app.all('*', function (request, response, next) {
@@ -42,24 +45,19 @@ app.post("/get_products_data", function (request, response) {
     response.json(products_data);
 });
 
-app.get("/add_to_cart", function (request, response) {
-    var products_key = request.query['products_key']; // get the product key sent from the form post
-    var quantities = request.query['quantities'].map(Number); // Get quantities from the form post and convert strings from form post to numbers
-    request.session.cart[products_key] = quantities; // store the quantities array in the session cart object with the same products_key. 
-    response.redirect('./invoice.html');
-});
 
 // routing
 app.get("/product_data.js", function (request, response, next) {
     response.type('.js');
-    var products_str = `var products = ${JSON.stringify(products)};`;
+    var products_str = `var products_data = ${JSON.stringify(products_data)};`;
     response.send(products_str);
 });
 
-app.post("/process_form", function (request, response, next) {
+app.post("/add_to_cart", function (request, response, next) {
     let POST = request.body;
     let params = new URLSearchParams(request.body);
     var products_key = request.query['products_key']; // get the product key sent from the form post
+    console.log(products_key)
 
     // if error with submit value, show error message
     if (typeof POST['purchase_submit'] == 'undefined') {
@@ -107,7 +105,7 @@ app.post("/process_form", function (request, response, next) {
             products_data[products_key][i].quantity_available -= Number(POST[`quantity${i}`]);
         }
         // direct user to login form
-        response.redirect('./login?' + params.toString());
+        response.redirect(`./login?products_key=${products_key}&` + params.toString());
     }
 
     // shows in the console the values received 
@@ -227,8 +225,10 @@ app.post("/login", function (request, response) {
     // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
+            response.cookie('username', login_username); 
+            console.log(`${request.cookies} is logged in`); // work on being able to display this user on the products_display page
             // redirect to the invoice, personalizing the name and email from the user logged in
-            response.redirect(`./invoice.html?fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&username=${login_username}&` + params.toString());
+            response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}&fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&username=${login_username}&` + params.toString());
             return; // no other code 
         } else { // if password doesn't match, redirect to the login page and add error msg to array
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;

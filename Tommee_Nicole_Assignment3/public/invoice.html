@@ -6,7 +6,7 @@
   let params = (new URL(document.location)).searchParams;
   // if no username, no login so send to login
   if (params.has('username') == false) {
-    window.location.href = "./products_display.html" + location.search;
+    window.location.href = `./products_display.html?products_key=20 Inch Hello Kitty` + location.search;
     window.alert("Please add some items before accessing your cart!");
   }
 
