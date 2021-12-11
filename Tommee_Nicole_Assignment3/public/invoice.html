@@ -8,14 +8,8 @@
 <html lang="en">
 <script src="./product_data.js" type="text/javascript"></script>
 <script>
+// if you aren't logged in you shouldn't be able to access this page
 
-  /*let params = (new URL(document.location)).searchParams;
-  // if no username, no login so send to login
-  if (params.has('username') == false) {
-    window.location.href = `./products_display.html?products_key=20 Inch Hello Kitty` + location.search;
-    window.alert("Please add some items before accessing your cart!");
-  }
-  */
 
   // get the query string
   if (params.has('products_key')) {
@@ -152,7 +146,8 @@
   <br>
   <br>
   <form action="./index.html">
-    <input type="submit" value="Return to Home Page" name="home_button"
+    <input type="submit" value="Return to Home Page" name="home_button" 
+    onclick=""
       style="margin:0px auto; display:block; background-color: palevioletred; border-radius: 8px; font-family: 'Montserrat', sans-serif">
   </form>
 

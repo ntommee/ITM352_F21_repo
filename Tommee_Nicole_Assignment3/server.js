@@ -11,6 +11,8 @@ const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
+var cookieParser = require('cookie-parser');
+app.use(cookieParser()); // makes it middleware - takes the cookie data and puts it into the cookie object
 var session = require('express-session');
 app.use(session({ secret: "MySecretKey", resave: true, saveUninitialized: true }));
 
@@ -47,7 +49,6 @@ app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
 
-
 // routing
 app.get("/product_data.js", function (request, response, next) {
     response.type('.js');
@@ -65,11 +66,9 @@ app.post("/add_to_cart", function (request, response, next) {
 
     for (let i in products_data[products_key]) {
         q = POST['quantity' + i];
-
         if (isNonNegInt(q) == false) {
             errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
         }
-
         if (q > products_data[products_key][i].quantity_available) {
             errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
         }
@@ -111,13 +110,11 @@ app.post("/add_to_cart", function (request, response, next) {
             }
         }
         console.log(request.session);
-        console.log(request.session.cart[products_key]);
     }
     let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
     response.redirect(`./products_display.html?${params.toString()}`);
 });
-
 
 var filename = 'user_data.json';
 if (fs.existsSync(filename)) {
@@ -207,10 +204,13 @@ app.post("/register", function (request, response) {
         users_reg_data[username].fullname = request.body['fullname'];
         // write the info to the JSON file
         fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
-        // redirect to login page
-        response.redirect('./login?' + params.toString());
+        // store user info in session
+        request.session['username'] = users_reg_data[username];
+        request.session['email'] = users_reg_data[username]['email'];
+        request.session['fullname'] = users_reg_data[username]['fullname'];
+        // redirect to products display page for user to continue shopping
+        response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}`+ params.toString());
         return;
-        console.log("successfully registered") + params.toString();
     } else { // regenerate the register page with sticky form 
         var str = generate_register_page(params, { "username": username, "fullname": request.body.fullname, "email": request.body.email });
         response.send(str);

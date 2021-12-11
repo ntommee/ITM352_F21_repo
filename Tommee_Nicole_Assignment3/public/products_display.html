@@ -94,6 +94,12 @@
       <h5 style="font-size: 12px; text-align: right; margin-top: 20px;">You have <span id="cart_total">0</span> items in
         your shopping cart</h5>
       <script>
+        if (typeof request.session['username'] != 'undefined') {
+          document.getElementById(login).innerHTML = `logout ${request.session['username']}`;
+        } else {
+          document.getElementById(login).innerHTML = 'login';
+        }
+
         var products_data;
         var total = 0;
         loadJSON('get_products_data', function (response) {

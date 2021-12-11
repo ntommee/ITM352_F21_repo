@@ -10,6 +10,9 @@
 <script src="./functions.js"></script>
 
 <script>
+  // make it so that if you don't have any items in cart, you cannot access this page
+  // get the cart information from the session and loop through it 
+
   var products_data;
   var total = 0;
   loadJSON('get_products_data', function (response) {
@@ -24,7 +27,7 @@
     }
   });
 
-  // get the query string
+  // get the query string --> there is no query string so I need to fix this
   let params = (new URL(document.location)).searchParams;
   if (params.has('products_key')) {
     var this_product_key = params.get('products_key');
@@ -43,7 +46,7 @@
   function display_invoice_table_rows() {
     subtotal = 0;
     str = '';
-    for (i = 0; i < products.length; i++) {
+    for (i = 0; i < products.length; i++) { 
       a_qty = 0;
       // if the quantity is valid, store the quantity in a_qty
       if (typeof params.get(`quantity${i}`) != 'undefined') {
@@ -89,8 +92,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invoice</title>
-  <link rel="stylesheet" href="styles.css">
-
 </head>
 
 <body>
