@@ -11,8 +11,6 @@ const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
-var cookieParser = require('cookie-parser');
-app.use(cookieParser()); // makes it middleware - takes the cookie data and puts it into the cookie object
 var session = require('express-session');
 app.use(session({ secret: "MySecretKey", resave: true, saveUninitialized: true }));
 
@@ -49,6 +47,7 @@ app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
 
+
 // routing
 app.get("/product_data.js", function (request, response, next) {
     response.type('.js');
@@ -58,17 +57,7 @@ app.get("/product_data.js", function (request, response, next) {
 
 app.post("/add_to_cart", function (request, response, next) {
     let POST = request.body;
-    let params = new URLSearchParams(request.body);
-    var products_key = request.query['products_key']; // get the product key sent from the form post
-  
-    // if error with submit value, show error message
-    if (typeof POST['purchase_submit'] == 'undefined') {
-        response.send("Please purchase some items first!");
-        console.log('No purchase form data');
-        next();
-        return;
-    }
-
+    var products_key = request.body['products_key']; // get the product key sent from the form post
     // Validations 
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
@@ -76,9 +65,11 @@ app.post("/add_to_cart", function (request, response, next) {
 
     for (let i in products_data[products_key]) {
         q = POST['quantity' + i];
+
         if (isNonNegInt(q) == false) {
             errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
         }
+
         if (q > products_data[products_key][i].quantity_available) {
             errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
         }
@@ -114,16 +105,19 @@ app.post("/add_to_cart", function (request, response, next) {
             // if the i item in products_key already exists in the cart, add quantities_requested to the existing value
             if (typeof request.session.cart[products_key][i] != 'undefined') {
                 request.session.cart[products_key][i] += quantity_requested;
-            // else if the i item in products_key doesn't exist in the cart, add quantity_requested 
+                // else if the i item in products_key doesn't exist in the cart, add quantity_requested 
             } else {
                 request.session.cart[products_key][i] = quantity_requested;
             }
         }
         console.log(request.session);
+        console.log(request.session.cart[products_key]);
     }
+    let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
     response.redirect(`./products_display.html?${params.toString()}`);
 });
+
 
 var filename = 'user_data.json';
 if (fs.existsSync(filename)) {
@@ -135,7 +129,7 @@ if (fs.existsSync(filename)) {
     console.log(`Hey! ${filename} does not exist!`);
 }
 
-app.post("return_to_home", function(request, response) {
+app.post("return_to_home", function (request, response) {
     sessionStorage.clear();
     response.redirect("./index.html");
 });
@@ -213,13 +207,10 @@ app.post("/register", function (request, response) {
         users_reg_data[username].fullname = request.body['fullname'];
         // write the info to the JSON file
         fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
-        // store user info in session
-        request.session['username'] = users_reg_data[username];
-        request.session['email'] = users_reg_data[username]['email'];
-        request.session['fullname'] = users_reg_data[username]['fullname'];
-        // redirect to products display page for user to continue shopping
-        response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}`+ params.toString());
+        // redirect to login page
+        response.redirect('./login?' + params.toString());
         return;
+        console.log("successfully registered") + params.toString();
     } else { // regenerate the register page with sticky form 
         var str = generate_register_page(params, { "username": username, "fullname": request.body.fullname, "email": request.body.email });
         response.send(str);
@@ -250,7 +241,7 @@ app.post("/login", function (request, response) {
             request.session['email'] = users_reg_data[login_username]['email'];
             request.session['fullname'] = users_reg_data[login_username]['fullname'];
             // go back to the products display page 
-            response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}`+ params.toString());
+            response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}` + params.toString());
             return; // no other code 
         } else { // if password doesn't match, redirect to the login page and add error msg to array
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
