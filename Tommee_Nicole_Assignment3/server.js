@@ -11,6 +11,10 @@ const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
+
+var cookieParser = require('cookie-parser');
+app.use(cookieParser()); // makes it middleware - takes the cookie data and puts it into the cookie object
+
 var session = require('express-session');
 app.use(session({ secret: "MySecretKey", resave: true, saveUninitialized: true }));
 
@@ -93,31 +97,28 @@ app.post("/add_to_cart", function (request, response, next) {
         params.append('errorMessage', errorMessage_str);
         response.redirect(`./products_display.html?${params.toString()}`);
     } else {
-        // if there are no errors, put quanties into session.cart
+        // if there are no errors, put quantities into session.cart
         if (typeof request.session.cart == 'undefined') {
             request.session.cart = {}; // creates a new cart if there isn't already one 
         }
         for (let i in products_data[products_key]) {
-            if (typeof request.session.cart[products_key] == 'undefined') {
-                request.session.cart[products_key] = [];
+            if (typeof request.session.cart[products_key] == 'undefined') { 
+                request.session.cart[products_key] = []; // adds the product key to the cart if there isn't already one
             }
             quantity_requested = Number(POST['quantity' + i]);
             // if the i item in products_key already exists in the cart, add quantities_requested to the existing value
             if (typeof request.session.cart[products_key][i] != 'undefined') {
                 request.session.cart[products_key][i] += quantity_requested;
-                // else if the i item in products_key doesn't exist in the cart, add quantity_requested 
-            } else {
+            } else { // else if the i item in products_key doesn't exist in the cart, add quantity_requested 
                 request.session.cart[products_key][i] = quantity_requested;
             }
         }
         console.log(request.session);
-        console.log(request.session.cart[products_key]);
     }
     let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
     response.redirect(`./products_display.html?${params.toString()}`);
 });
-
 
 var filename = 'user_data.json';
 if (fs.existsSync(filename)) {
@@ -130,7 +131,7 @@ if (fs.existsSync(filename)) {
 }
 
 app.post("return_to_home", function (request, response) {
-    sessionStorage.clear();
+    session.destroy();
     response.redirect("./index.html");
 });
 
@@ -240,6 +241,11 @@ app.post("/login", function (request, response) {
             request.session['username'] = login_username;
             request.session['email'] = users_reg_data[login_username]['email'];
             request.session['fullname'] = users_reg_data[login_username]['fullname'];
+
+            // create username cookie -- figure out expiration time later
+            response.cookie('username', login_username);
+            console.log(request.cookies);
+            
             // go back to the products display page 
             response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}` + params.toString());
             return; // no other code 
