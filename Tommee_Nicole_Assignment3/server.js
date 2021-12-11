@@ -58,7 +58,6 @@ app.get("/product_data.js", function (request, response, next) {
 
 app.post("/add_to_cart", function (request, response, next) {
     let POST = request.body;
-<<<<<<< HEAD
     let params = new URLSearchParams(request.body);
     var products_key = request.query['products_key']; // get the product key sent from the form post
   
@@ -70,9 +69,6 @@ app.post("/add_to_cart", function (request, response, next) {
         return;
     }
 
-=======
-    var products_key = request.body['products_key']; // get the product key sent from the form post
->>>>>>> 76f659f9d4cb97b1f075b8b9ecd0aec33ebcc37f
     // Validations 
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
@@ -125,7 +121,6 @@ app.post("/add_to_cart", function (request, response, next) {
         }
         console.log(request.session);
     }
-    let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
     response.redirect(`./products_display.html?${params.toString()}`);
 });
