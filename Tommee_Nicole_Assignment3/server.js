@@ -1,6 +1,6 @@
 /* 
 * Nicole Tommee
-* Displays product data, validates the input, requires & then validates login information, and presents user a personalized invoice.
+* Displays product data, validates the input, & then validates login information, and presents user a personalized invoice.
 * Used code from Lab13 Ex4, Lab 14 Ex4, Assignment1_MVC_server, and Assignemnt 3 Examples for guidance
 */
 
@@ -11,12 +11,10 @@ const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
-var cookieParser = require('cookie-parser');
 var session = require('express-session');
-var products_data = require('./products.json');
-
 app.use(session({ secret: "MySecretKey", resave: true, saveUninitialized: true }));
 
+var products_data = require('./products.json');
 
 app.all('*', function (request, response, next) {
     console.log(`Got a ${request.method} to path ${request.path}`);
@@ -45,6 +43,10 @@ app.post("/get_products_data", function (request, response) {
     response.json(products_data);
 });
 
+app.post("/get_cart", function (request, response) {
+    response.json(request.session.cart);
+});
+
 
 // routing
 app.get("/product_data.js", function (request, response, next) {
@@ -55,6 +57,7 @@ app.get("/product_data.js", function (request, response, next) {
 
 app.post("/add_to_cart", function (request, response, next) {
     let POST = request.body;
+<<<<<<< HEAD
     let params = new URLSearchParams(request.body);
     var products_key = request.query['products_key']; // get the product key sent from the form post
   
@@ -66,29 +69,31 @@ app.post("/add_to_cart", function (request, response, next) {
         return;
     }
 
+=======
+    var products_key = request.body['products_key']; // get the product key sent from the form post
+>>>>>>> 76f659f9d4cb97b1f075b8b9ecd0aec33ebcc37f
     // Validations 
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
+    var quantity_array = [];
 
-    for (products_key in products_data) {
-        for (i = 0; i < products_data[products_key].length; i++) {
-            q = POST['quantity' + i];
-            if (isNonNegInt(q) == false) {
-                errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
-            }
+    for (let i in products_data[products_key]) {
+        q = POST['quantity' + i];
 
-            if (q > products_data[products_key][i].quantity_available) {
-                errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
-            }
-            if (q > 0) {
-                empty = false;
-                console.log("Some quantities inputted.")
-            }
+        if (isNonNegInt(q) == false) {
+            errors['invalid' + i] = `${q} is not a valid quantity for ${products_data[products_key][i].name}`;
         }
-    }
-    // if no quantities entered
-    if (empty == true) {
-        errors['empty' + i] = `Please enter some quantities.`;
+
+        if (q > products_data[products_key][i].quantity_available) {
+            errors['quantity' + i] = `${q} items are not available for ${products_data[products_key][i].name}`;
+        }
+        if (q > 0) {
+            empty = false;
+            console.log("Some quantities inputted.")
+        } else if ((typeof errors['invalid' + i] != 'undefined') && (typeof errors['quantity' + i] != 'undefined')) {
+            errors['empty'] = `Please enter some quantities.`;
+            console.log("Please enter some quantities.");
+        }
     }
 
     // if there are errors, display each error on a new line
@@ -97,18 +102,34 @@ app.post("/add_to_cart", function (request, response, next) {
         for (err in errors) {
             errorMessage_str += errors[err] + '\n';
         }
-        response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&products_key=${products_key}&` + QueryString.stringify(POST));
+        // response.redirect(`./products_display.html?errorMessage=${errorMessage_str}&` + JSON.stringify(POST));
+        let params = new URLSearchParams(request.body);
+        params.append('errorMessage', errorMessage_str);
+        response.redirect(`./products_display.html?${params.toString()}`);
     } else {
-        // quantities are valid so remove from inventory
-        for (i = 0; i < products_data[products_key].length; i++) {
-            products_data[products_key][i].quantity_available -= Number(POST[`quantity${i}`]);
+        // if there are no errors, put quanties into session.cart
+        if (typeof request.session.cart == 'undefined') {
+            request.session.cart = {}; // creates a new cart if there isn't already one 
         }
-        // direct user to login form
-        response.redirect(`./login?products_key=${products_key}&` + params.toString());
+        for (let i in products_data[products_key]) {
+            if (typeof request.session.cart[products_key] == 'undefined') {
+                request.session.cart[products_key] = [];
+            }
+            quantity_requested = Number(POST['quantity' + i]);
+            // if the i item in products_key already exists in the cart, add quantities_requested to the existing value
+            if (typeof request.session.cart[products_key][i] != 'undefined') {
+                request.session.cart[products_key][i] += quantity_requested;
+            // else if the i item in products_key doesn't exist in the cart, add quantity_requested 
+            } else {
+                request.session.cart[products_key][i] = quantity_requested;
+            }
+        }
+        console.log(request.session);
+        console.log(request.session.cart[products_key]);
     }
-
-    // shows in the console the values received 
-    console.log(Date.now() + ': Purchase made from ip ' + request.ip + ' data: ' + JSON.stringify(POST));
+    let params = new URLSearchParams(request.body);
+    params.append('products_key', products_key);
+    response.redirect(`./products_display.html?${params.toString()}`);
 });
 
 
@@ -119,8 +140,13 @@ if (fs.existsSync(filename)) {
     var users_reg_data = JSON.parse(user_data_str); // parses into oject and stores in users_reg_data
     var file_stats = fs.statSync(filename);
 } else {
-    console.log(`Hey! ${filename} does not exist!`)
+    console.log(`Hey! ${filename} does not exist!`);
 }
+
+app.post("return_to_home", function(request, response) {
+    sessionStorage.clear();
+    response.redirect("./index.html");
+});
 
 app.get("/register", function (request, response) {
     let params = new URLSearchParams(request.query);
@@ -224,10 +250,12 @@ app.post("/login", function (request, response) {
     // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
-            response.cookie('username', login_username); 
-            console.log(`${request.cookies} is logged in`); // work on being able to display this user on the products_display page
-            // redirect to the invoice, personalizing the name and email from the user logged in
-            response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}&fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&username=${login_username}&` + params.toString());
+            // store username, email, and full name in the session
+            request.session['username'] = login_username;
+            request.session['email'] = users_reg_data[login_username]['email'];
+            request.session['fullname'] = users_reg_data[login_username]['fullname'];
+            // go back to the products display page 
+            response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}`+ params.toString());
             return; // no other code 
         } else { // if password doesn't match, redirect to the login page and add error msg to array
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;

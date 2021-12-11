@@ -1,29 +1,37 @@
-<!--https://webdesignerwall.com/wdw-snippet/order-confirmation-invoice-bill-template-->
+<!-- 
+    Author: Nicole Tommee
+    Final confirmation invoice that confirms the user's items and where the confirmation email will be sent.
+    Referenced code from Assignment 3 examples
+    https://webdesignerwall.com/wdw-snippet/order-confirmation-invoice-bill-template
+  -->
 <!DOCTYPE html>
 <html lang="en">
 <script src="./product_data.js" type="text/javascript"></script>
 <script>
-  let params = (new URL(document.location)).searchParams;
+
+  /*let params = (new URL(document.location)).searchParams;
   // if no username, no login so send to login
   if (params.has('username') == false) {
     window.location.href = `./products_display.html?products_key=20 Inch Hello Kitty` + location.search;
     window.alert("Please add some items before accessing your cart!");
   }
+  */
 
-    // get the query string
-    if (params.has('products_key')) {
-      var products_key = params.get('products_key');
-    } else {
-      document.write('no products key in query string');
-      document.stop;
-    }
-    var products_data;
-    loadJSON('get_products_data', function (response) {
-      // Parsing JSON string into object
-      products_data = JSON.parse(response);
-    });
+  // get the query string
+  if (params.has('products_key')) {
+    var products_key = params.get('products_key');
+    console.log(`type of product is: ${products_key}`);
+  } else {
+    document.write('no products key in query string');
+    document.stop;
+  }
+  var products_data;
+  loadJSON('get_products_data', function (response) {
+    // Parsing JSON string into object
+    products_data = JSON.parse(response);
+  });
 
-    products = products_data[products_key]; // get the particular products to display
+  products = products_data[products_key]; // get the particular products to display
 
   function display_invoice_table_rows() {
     subtotal = 0;
@@ -129,18 +137,24 @@
       </script>
     </tbody>
   </table>
-<br>
-<br>
-    <p>
-      A copy of your receipt will be sent to
-      <strong>
+  <br>
+  <br>
+  <p>
+    A copy of your receipt will be sent to
+    <strong>
 
       <script>
         document.write(params.get('email'));
       </script>
-        </strong>
+    </strong>
+  </p>
 
-    </p>
+  <br>
+  <br>
+  <form action="./index.html">
+    <input type="submit" value="Return to Home Page" name="home_button"
+      style="margin:0px auto; display:block; background-color: palevioletred; border-radius: 8px; font-family: 'Montserrat', sans-serif">
+  </form>
 
   <div class="shippingRates"> <b> <br>
       SHIPPING RATES: <br>
