@@ -10,7 +10,6 @@
 <script src="./functions.js"></script>
 
 <script>
-  let params = (new URL(document.location)).searchParams;
   var products_data;
   var total = 0;
   loadJSON('get_products_data', function (response) {
@@ -26,6 +25,7 @@
   });
 
   // get the query string
+  let params = (new URL(document.location)).searchParams;
   if (params.has('products_key')) {
     var this_product_key = params.get('products_key');
   } else {
