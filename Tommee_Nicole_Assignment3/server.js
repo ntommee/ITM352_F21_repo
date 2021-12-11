@@ -100,14 +100,18 @@ app.post("/add_to_cart", function (request, response, next) {
             request.session.cart = {}; // creates a new cart if there isn't already one 
         }
         for (let i in products_data[products_key]) {
-            quantity_requested = POST['quantity' + i];
-            quantity_array[i] = quantity_requested;
-            var quantities = quantity_array.map(Number);
-            request.session.cart[products_key] = quantities;
+            quantity_requested = Number(POST['quantity' + i]);
+            // if the i item in products_key already exists in the cart, add quantities_requested to the existing value
+            if (typeof request.session.cart[products_key][i] != 'undefined') {
+                request.session.cart[products_key][i] += quantity_requested;
+            } else {
+            // else if the i item in products_key doesn't exist in the cart, add quantity_requested 
+            request.session.cart[products_key][i] = quantity_requested;
+            }
         }
         console.log(request.session);
     }
-    let params = new URLSearchParams(request.body);
+    // let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
     response.redirect(`./products_display.html?${params.toString()}`);
 });
