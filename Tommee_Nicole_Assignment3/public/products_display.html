@@ -63,22 +63,6 @@
   .w3-bar-block .w3-bar-item {
     padding: 20px
   }
-
-  img {
-    border-radius: 4px;
-    /* Rounded border */
-    padding: -10px;
-    /* Some padding */
-    margin-right: -130px;
-    margin-top: 30px;
-    height: 40%;
-    width: 40%;
-  }
-
-  /* Add a hover effect (blue shadow) */
-  img:hover {
-    box-shadow: 0 0 5px 1px black;
-  }
 </style>
 
 <head>
@@ -104,11 +88,25 @@
   <!-- Header -->
   <div class="w3-top">
     <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-      <div class="w3-padding-16 w3-left"><a href='./login' style="margin-left: 30px;">Login</a></div>
-      <h6><div class="w3-right w3-padding-16"><a href='./cart.html'><img src="./images/shoppingCart.png"></a></div></h6>
-      <h5 style="font-size: 12px; text-align: right;">You have <span id="cart_total">0</span> items in your shopping
-        cart</h5>
+      <div class="w3-padding-16 w3-left"><a href='./login' style="margin-left: 30px;"><span id="login">Login</span></a>
+      </div>
+      <div class="w3-right w3-padding-16"><a href=cart.html style="margin-right:30px;">View Cart</a></div>
+      <h5 style="font-size: 12px; text-align: right; margin-top: 20px;">You have <span id="cart_total">0</span> items in
+        your shopping cart</h5>
       <script>
+        var products_data;
+        var total = 0;
+        loadJSON('get_products_data', function (response) {
+          // Parsing JSON string into object
+          products_data = JSON.parse(response);
+        });
+        loadJSON('get_cart', function (response) {
+          // Parsing JSON string into object
+          shopping_cart = JSON.parse(response);
+          for (pk in shopping_cart) {
+            total += shopping_cart[pk].reduce((a, b) => a + b);
+          }
+        });
         cart_total.innerHTML = total;
       </script>
       <div class="w3-center w3-padding-16">Nicole's Hello Kitty Squishmallow Store</div>
@@ -152,7 +150,7 @@
     <!--submit button that shows "purchase"-->
     <br><br>
     <input type="submit" value="Add Items to Cart" name="purchase_submit"
-      style="margin:0px auto; display:block; background-color: palevioletred;">
+      style="margin:0px auto; display:block; background-color: palevioletred; border-radius: 8px;">
     </form>
 
     <!-- Footer -->

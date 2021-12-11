@@ -38,6 +38,7 @@
   nav_bar(this_product_key, products_data);
 
   products = products_data[products_key]; // get the particular products to display
+  console.log("your items:" + products);
 
   function display_invoice_table_rows() {
     subtotal = 0;
@@ -100,7 +101,7 @@
   </script>
 
 
-  <img src="./images/hkwaving.gif" style="width:50%">
+  <img src="./images/cart.png" style="width:50%; margin-bottom: -7px;">
   <table border="2">
     <tbody>
       <tr style="background-color: palevioletred">
@@ -144,14 +145,10 @@
   <br>
   <br>
   <p>
-    A copy of your receipt will be sent to
-    <strong>
-
-      <script>
-        document.write(params.get('email'));
-      </script>
-    </strong>
-
+  <form action="./invoice.html">
+    <input type="submit" value="Submit Order" name="confirm_purchase"
+      style="margin:0px auto; display:block; background-color: palevioletred; border-radius: 8px; font-family: 'Montserrat', sans-serif">
+  </form>
   </p>
 
   <div class="shippingRates"> <b> <br>

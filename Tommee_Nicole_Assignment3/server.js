@@ -11,12 +11,10 @@ const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 
-var cookieParser = require('cookie-parser');
 var session = require('express-session');
-var products_data = require('./products.json');
-
 app.use(session({ secret: "MySecretKey", resave: true, saveUninitialized: true }));
 
+var products_data = require('./products.json');
 
 app.all('*', function (request, response, next) {
     console.log(`Got a ${request.method} to path ${request.path}`);
@@ -45,7 +43,7 @@ app.post("/get_products_data", function (request, response) {
     response.json(products_data);
 });
 
-app.get("/get_cart", function (request, response) {
+app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
 
@@ -113,6 +111,7 @@ app.post("/add_to_cart", function (request, response, next) {
             }
         }
         console.log(request.session);
+        console.log(request.session.cart[products_key]);
     }
     let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
@@ -127,12 +126,13 @@ if (fs.existsSync(filename)) {
     var users_reg_data = JSON.parse(user_data_str); // parses into oject and stores in users_reg_data
     var file_stats = fs.statSync(filename);
 } else {
-    console.log(`Hey! ${filename} does not exist!`)
+    console.log(`Hey! ${filename} does not exist!`);
 }
 
-app.post("/purchase_items"), function (request, response) {
-    response.redirect("./invoice.html");
-}
+app.post("return_to_home", function(request, response) {
+    sessionStorage.clear();
+    response.redirect("./index.html");
+});
 
 app.get("/register", function (request, response) {
     let params = new URLSearchParams(request.query);
@@ -236,10 +236,12 @@ app.post("/login", function (request, response) {
     // check if username exists, then check password entered matches password stored
     if (typeof users_reg_data[login_username] != 'undefined') { // if user matches what we have
         if (users_reg_data[login_username]['password'] == login_password) {
-            response.cookie('username', login_username);
-            console.log(`${request.cookies} is logged in`); // work on being able to display this user on the products_display page
-            // redirect to the invoice, personalizing the name and email from the user logged in
-            response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}&fullname=${users_reg_data[login_username]['fullname']}&email=${users_reg_data[login_username]['email']}&username=${login_username}&` + params.toString());
+            // store username, email, and full name in the session
+            request.session['username'] = login_username;
+            request.session['email'] = users_reg_data[login_username]['email'];
+            request.session['fullname'] = users_reg_data[login_username]['fullname'];
+            // go back to the products display page 
+            response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}`+ params.toString());
             return; // no other code 
         } else { // if password doesn't match, redirect to the login page and add error msg to array
             loginerrors['incorrect_password'] = `Incorrect password for ${login_username}`;
