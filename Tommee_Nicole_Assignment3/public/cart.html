@@ -16,8 +16,6 @@
   // get the cart information from the session and loop through it to display products
   // get the full name from the session to personalize this page with the user's name.
 
-  console.log(request.session['fullname']);
-
   var products_data;
   var total = 0;
   loadJSON('get_products_data', function (response) {
@@ -36,9 +34,6 @@
   let params = (new URL(document.location)).searchParams;
   if (params.has('products_key')) {
     var this_product_key = params.get('products_key');
-  } else {
-    document.write('no products key in query string');
-    document.stop;
   }
 
   // navigation bar
@@ -53,7 +48,7 @@
     str = '';
     for (i = 0; i < products.length; i++) { 
       a_qty = 0;
-      // if the quantity is valid, store the quantity in a_qty
+      // if the quantity is valid, store the quantity in a_qty ->> fix this: there are no params! must get quantity from session cart
       if (typeof params.get(`quantity${i}`) != 'undefined') {
         a_qty = params.get(`quantity${i}`);
       }

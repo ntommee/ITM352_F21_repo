@@ -16,6 +16,23 @@
     }
   }
 
+  // code from https://www.w3schools.com/js/js_cookies.asp
+  function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+              let c = ca[i];
+              while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+              }
+              if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+              }
+            }
+            return "";
+          }
+
   function isNonNegInt(q, returnErrors = false) {
     errors = []; // assume no errors at first
     if (q == '') q = 0;
@@ -90,7 +107,7 @@
     <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
       <!--If the cookie username exists, set this text to display logout *username* but if there is no username cookie, it should just say login-->
       <!--Eventually when it says logout *username* that logout text will need to also function as a logout so the href will have to change too. Clicking logout will clear the username cookie.-->
-      <div class="w3-padding-16 w3-left"><a href='./login' style="margin-left: 30px;"><span id="login"></span>Login</a>
+      <div class="w3-padding-16 w3-left"><a href='./login' style="margin-left: 30px;"><span id="login"></span></a>
       </div>
       <div class="w3-right w3-padding-16"><a href=cart.html style="margin-right:30px;">View Cart</a></div>
       <h5 style="font-size: 12px; text-align: right; margin-top: 20px;">You have <span id="cart_total">0</span> items in
@@ -116,6 +133,15 @@
         <script>
           document.write(`<a href='./index.html'>Home</a>&nbsp&nbsp&nbsp;`);
           nav_bar(products_key, products_data);
+
+          // if there is a username in the cookie, display logout *username*
+          if (document.cookie.indexOf('username') >= 0) {
+            login.innerHTML = `Logout ${getCookie('username')}`;
+          } else { // if not logged in, display "login"
+            login.innerHTML = "Login";
+          }
+          console.log(getCookie('username'));
+          console.log(document.cookie.indexOf('username'));
         </script>
       </div>
     </div>
