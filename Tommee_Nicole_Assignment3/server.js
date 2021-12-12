@@ -135,6 +135,11 @@ app.post("return_to_home", function (request, response) {
     response.redirect("./index.html");
 });
 
+app.get("/logout", function(request,response){
+    session.destroy();
+
+});
+
 app.get("/register", function (request, response) {
     let params = new URLSearchParams(request.query);
     // Give a simple register form
