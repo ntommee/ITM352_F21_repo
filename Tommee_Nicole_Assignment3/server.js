@@ -51,9 +51,16 @@ app.post("/get_products_key", function (request, response) {
     response.json(request.session['type']);
 });
 
-
 app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
+});
+
+app.post("/get_email", function (request, response) {
+    response.json(request.session['email']);
+});
+
+app.post("/get_fullname", function (request, response) {
+    response.json(request.session['fullname']);
 });
 
 // routing
@@ -143,14 +150,54 @@ if (fs.existsSync(filename)) {
     console.log(`Hey! ${filename} does not exist!`);
 }
 
-app.post("return_to_home", function (request, response) {
-    session.destroy();
-    response.redirect("./index.html");
-});
+
+// Referenced Assignment 3 Examples
+app.get("/checkout", function (request, response) {
+    // Generate HTML invoice string
+      var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
+      var shopping_cart = request.session.cart;
+      for(product_key in products_data) {
+        for(i=0; i<products_data[product_key].length; i++) {
+            if(typeof shopping_cart[product_key] == 'undefined') continue;
+            qty = shopping_cart[product_key][i];
+            if(qty > 0) {
+              invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
+            }
+        }
+    }
+      invoice_str += '</table>';
+    // Set up mail server. Only will work on UH Network due to security restrictions
+      var transporter = nodemailer.createTransport({
+        host: "mail.hawaii.edu",
+        port: 25,
+        secure: false, // use TLS
+        tls: {
+          // do not fail on invalid certs
+          rejectUnauthorized: false
+        }
+      });
+    
+      var user_email = 'phoney@mt2015.com';
+      var mailOptions = {
+        from: 'phoney_store@bogus.com',
+        to: user_email,
+        subject: 'Your phoney invoice',
+        html: invoice_str
+      };
+    
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          invoice_str += '<br>There was an error and your invoice could not be emailed :(';
+        } else {
+          invoice_str += `<br>Your invoice was mailed to ${user_email}`;
+        }
+        response.send(invoice_str);
+      });
+     
+    });
 
 app.get("/logout", function (request, response) {
     session.destroy();
-
 });
 
 app.get("/register", function (request, response) {
@@ -259,7 +306,6 @@ app.post("/login", function (request, response) {
             request.session['username'] = login_username;
             request.session['email'] = users_reg_data[login_username]['email'];
             request.session['fullname'] = users_reg_data[login_username]['fullname'];
-
             var date = new Date();
             var minutes = 30;
             date.setTime(date.getTime() + (minutes * 60 * 1000)); // expires in 30 minutes 

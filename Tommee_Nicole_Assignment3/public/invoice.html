@@ -7,6 +7,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <script src="./product_data.js" type="text/javascript"></script>
+<script src="./functions.js"></script>
+
 <script>
   /* this page will essentially be the same as cart.html but can't edit the quantities.
   * Get the cart from the session to get the product information
@@ -14,19 +16,22 @@
   * get the full name & email from the session to personalize this page with the user's information.
   */
 
-  // get the query string ->> there is no query string! will have to get this information from the session
-  if (params.has('products_key')) {
-    var products_key = params.get('products_key');
-    console.log(`type of product is: ${products_key}`);
-  } else {
-    document.write('no products key in query string');
-    document.stop;
-  }
   var products_data;
   loadJSON('get_products_data', function (response) {
     // Parsing JSON string into object
     products_data = JSON.parse(response);
   });
+
+  loadJSON('get_email', function (response) {
+    // Parsing JSON string into object
+    email = JSON.parse(response); // same as request.session['email']
+  });
+
+  loadJSON('get_fullname', function (response) {
+    // Parsing JSON string into object
+    fullname = JSON.parse(response); // same as request.session['fullname']
+  });
+  
 
   products = products_data[products_key]; // get the particular products to display
 
@@ -89,7 +94,7 @@
   <h2>Thank you for your purchase,
     <script>
       // change this! no params; get the fullname from the session
-      document.write(params.get('fullname') + "!");
+      document.write(fullname + "!");
     </script>
     <br>
   </h2>
@@ -143,7 +148,7 @@
 
       <script>
         // also change this! no params; get the email from the session
-        document.write(params.get('email'));
+        document.write(email);
       </script>
     </strong>
   </p>
