@@ -13,6 +13,8 @@
   // make it so that if you don't have any items in cart, you cannot access this page
   // get the cart information from the session and loop through it 
 
+  console.log(request.session['fullname']);
+
   var products_data;
   var total = 0;
   loadJSON('get_products_data', function (response) {
