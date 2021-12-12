@@ -260,8 +260,11 @@ app.post("/login", function (request, response) {
             request.session['email'] = users_reg_data[login_username]['email'];
             request.session['fullname'] = users_reg_data[login_username]['fullname'];
 
-            // create username cookie -- think about expiration time later
-            response.cookie('username', login_username);
+            var date = new Date();
+            var minutes = 30;
+            date.setTime(date.getTime() + (minutes * 60 * 1000)); // expires in 30 minutes 
+            // create username cookie 
+            response.cookie('username', login_username,{ expires: date });
             console.log(request.cookies);
 
             // go back to the products display page 
