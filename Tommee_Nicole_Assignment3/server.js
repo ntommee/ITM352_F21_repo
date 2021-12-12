@@ -10,7 +10,7 @@ var fs = require('fs');
 const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
-
+// console.log("here");
 
 var cookieParser = require('cookie-parser');
 app.use(cookieParser()); // makes it middleware - takes the cookie data and puts it into the cookie object
@@ -51,7 +51,6 @@ app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
 
-
 // routing
 app.get("/product_data.js", function (request, response, next) {
     response.type('.js');
@@ -59,13 +58,13 @@ app.get("/product_data.js", function (request, response, next) {
     response.send(products_str);
 });
 
+
 app.post("/add_to_cart", function (request, response, next) {
     let POST = request.body;
     var products_key = request.body['products_key']; // get the product key sent from the form post
     // Validations 
     var errors = {}; //assume no errors to start
     var empty = true // assume no quantities entered
-    var quantity_array = [];
 
     for (let i in products_data[products_key]) {
         q = POST['quantity' + i];
@@ -102,7 +101,7 @@ app.post("/add_to_cart", function (request, response, next) {
             request.session.cart = {}; // creates a new cart if there isn't already one 
         }
         for (let i in products_data[products_key]) {
-            if (typeof request.session.cart[products_key] == 'undefined') { 
+            if (typeof request.session.cart[products_key] == 'undefined') {
                 request.session.cart[products_key] = []; // adds the product key to the cart if there isn't already one
             }
             quantity_requested = Number(POST['quantity' + i]);
@@ -113,8 +112,9 @@ app.post("/add_to_cart", function (request, response, next) {
                 request.session.cart[products_key][i] = quantity_requested;
             }
         }
-        console.log(request.session);
+        console.log(request.session.cart);
     }
+    console.log(request.session['type]']);
     let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
     response.redirect(`./products_display.html?${params.toString()}`);
@@ -135,7 +135,7 @@ app.post("return_to_home", function (request, response) {
     response.redirect("./index.html");
 });
 
-app.get("/logout", function(request,response){
+app.get("/logout", function (request, response) {
     session.destroy();
 
 });
@@ -247,10 +247,10 @@ app.post("/login", function (request, response) {
             request.session['email'] = users_reg_data[login_username]['email'];
             request.session['fullname'] = users_reg_data[login_username]['fullname'];
 
-            // create username cookie -- figure out expiration time later
+            // create username cookie -- think about expiration time later
             response.cookie('username', login_username);
             console.log(request.cookies);
-            
+
             // go back to the products display page 
             response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}` + params.toString());
             return; // no other code 
@@ -390,3 +390,4 @@ function generate_register_page(params, form_data = {}) {
     `;
     return str;
 }
+

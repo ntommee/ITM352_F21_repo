@@ -18,20 +18,20 @@
 
   // code from https://www.w3schools.com/js/js_cookies.asp
   function getCookie(cname) {
-            let name = cname + "=";
-            let decodedCookie = decodeURIComponent(document.cookie);
-            let ca = decodedCookie.split(';');
-            for (let i = 0; i < ca.length; i++) {
-              let c = ca[i];
-              while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-              }
-              if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-              }
-            }
-            return "";
-          }
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
 
   function isNonNegInt(q, returnErrors = false) {
     errors = []; // assume no errors at first
@@ -105,8 +105,6 @@
   <!-- Header -->
   <div class="w3-top">
     <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-      <!--If the cookie username exists, set this text to display logout *username* but if there is no username cookie, it should just say login-->
-      <!--Eventually when it says logout *username* that logout text will need to also function as a logout so the href will have to change too. Clicking logout will clear the username cookie.-->
       <div class="w3-padding-16 w3-left"><a href='./login' style="margin-left: 30px;"><span id="login"></span></a>
       </div>
       <div class="w3-right w3-padding-16"><a href=cart.html style="margin-right:30px;">View Cart</a></div>
@@ -115,10 +113,6 @@
       <script>
         var products_data;
         var total = 0;
-        loadJSON('get_products_data', function (response) {
-          // Parsing JSON string into object
-          products_data = JSON.parse(response);
-        });
         loadJSON('get_cart', function (response) {
           // Parsing JSON string into object
           shopping_cart = JSON.parse(response);
@@ -134,14 +128,17 @@
           document.write(`<a href='./index.html'>Home</a>&nbsp&nbsp&nbsp;`);
           nav_bar(products_key, products_data);
 
-          // if there is a username in the cookie, display logout *username*
+          /* Need the logout text to also function as a logout so the href will have to change too. 
+          * Clicking logout will clear the username cookie
+          * document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          */
+          // if there is a username in the cookie, display "logout *username*"
           if (document.cookie.indexOf('username') >= 0) {
             login.innerHTML = `Logout ${getCookie('username')}`;
-          } else { // if not logged in, display "login"
+          } else { // else if not logged in, display "login"
             login.innerHTML = "Login";
           }
           console.log(getCookie('username'));
-          console.log(document.cookie.indexOf('username'));
         </script>
       </div>
     </div>

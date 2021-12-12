@@ -16,6 +16,8 @@
   // get the cart information from the session and loop through it to display products
   // get the full name from the session to personalize this page with the user's name.
 
+
+  // Referenced code from Assignment 3 examples
   var products_data;
   var total = 0;
   loadJSON('get_products_data', function (response) {
@@ -24,11 +26,12 @@
   });
   loadJSON('get_cart', function (response) {
     // Parsing JSON string into object
-    shopping_cart = JSON.parse(response);
+    shopping_cart = JSON.parse(response); // this is request.session.cart
     for (pk in shopping_cart) {
       total += shopping_cart[pk].reduce((a, b) => a + b);
     }
   });
+  console.log(products_data);
 
   // get the query string --> there is no query string so I need to fix this
   let params = (new URL(document.location)).searchParams;
@@ -46,7 +49,7 @@
   function display_invoice_table_rows() {
     subtotal = 0;
     str = '';
-    for (i = 0; i < products.length; i++) { 
+    for (i = 0; i < products.length; i++) {
       a_qty = 0;
       // if the quantity is valid, store the quantity in a_qty ->> fix this: there are no params! must get quantity from session cart
       if (typeof params.get(`quantity${i}`) != 'undefined') {
