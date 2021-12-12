@@ -8,8 +8,8 @@
 <html lang="en">
 <script src="./product_data.js" type="text/javascript"></script>
 <script>
-// if you aren't logged in you shouldn't be able to access this page
-// get the full name & email from the session to personalize this page with the user's information.
+  // if you aren't logged in you shouldn't be able to access this page
+  // get the full name & email from the session to personalize this page with the user's information.
 
   // get the query string
   if (params.has('products_key')) {
@@ -85,6 +85,7 @@
 
   <h2>Thank you for your purchase,
     <script>
+      // change this! no params; get the fullname from the session
       document.write(params.get('fullname') + "!");
     </script>
     <br>
@@ -138,6 +139,7 @@
     <strong>
 
       <script>
+        // also change this! no params; get the email from the session
         document.write(params.get('email'));
       </script>
     </strong>
@@ -146,8 +148,8 @@
   <br>
   <br>
   <form action="./index.html">
-    <input type="submit" value="Return to Home Page" name="home_button" 
-    onclick=""
+    <!-- Make sure that this return to home page button clears the session  -->
+    <input type="submit" value="Return to Home Page" name="home_button"
       style="margin:0px auto; display:block; background-color: palevioletred; border-radius: 8px; font-family: 'Montserrat', sans-serif">
   </form>
 
