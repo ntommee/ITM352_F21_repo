@@ -47,6 +47,11 @@ app.post("/get_products_data", function (request, response) {
     response.json(products_data);
 });
 
+app.post("/get_products_key", function (request, response) {
+    response.json(request.session['type']);
+});
+
+
 app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
@@ -100,6 +105,14 @@ app.post("/add_to_cart", function (request, response, next) {
         if (typeof request.session.cart == 'undefined') {
             request.session.cart = {}; // creates a new cart if there isn't already one 
         }
+        if (typeof request.session['type'] == 'undefined') {
+            request.session['type'] = []
+        }
+
+        if (request.session['type'].indexOf(products_key) == -1) {
+            request.session['type'].push(products_key);
+        }
+
         for (let i in products_data[products_key]) {
             if (typeof request.session.cart[products_key] == 'undefined') {
                 request.session.cart[products_key] = []; // adds the product key to the cart if there isn't already one
@@ -113,8 +126,8 @@ app.post("/add_to_cart", function (request, response, next) {
             }
         }
         console.log(request.session.cart);
+        console.log(request.session['type']);
     }
-    console.log(request.session['type]']);
     let params = new URLSearchParams(request.body);
     params.append('products_key', products_key);
     response.redirect(`./products_display.html?${params.toString()}`);
