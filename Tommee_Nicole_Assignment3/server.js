@@ -55,7 +55,7 @@ app.post("/get_cart", function (request, response) {
 app.post("/get_user_info", function (request, response) {
     let username = request.query.username;
     let user_info = users_reg_data[username];
-    delete user_info['password'];
+    // request.session[user_info] = delete user_info['password'];
     response.json(user_info);
 });
 
@@ -160,47 +160,47 @@ if (fs.existsSync(filename)) {
 // Referenced Assignment 3 Examples
 app.get("/checkout", function (request, response) {
     // Generate HTML invoice string
-      var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
-      var shopping_cart = request.session.cart;
-      for(product_key in products_data) {
-        for(i=0; i<products_data[product_key].length; i++) {
-            if(typeof shopping_cart[product_key] == 'undefined') continue;
+    var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
+    var shopping_cart = request.session.cart;
+    for (product_key in products_data) {
+        for (i = 0; i < products_data[product_key].length; i++) {
+            if (typeof shopping_cart[product_key] == 'undefined') continue;
             qty = shopping_cart[product_key][i];
-            if(qty > 0) {
-              invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
+            if (qty > 0) {
+                invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
             }
         }
     }
-      invoice_str += '</table>';
+    invoice_str += '</table>';
     // Set up mail server. Only will work on UH Network due to security restrictions
-      var transporter = nodemailer.createTransport({
+    var transporter = nodemailer.createTransport({
         host: "mail.hawaii.edu",
         port: 25,
         secure: false, // use TLS
         tls: {
-          // do not fail on invalid certs
-          rejectUnauthorized: false
+            // do not fail on invalid certs
+            rejectUnauthorized: false
         }
-      });
-    
-      var user_email = 'phoney@mt2015.com';
-      var mailOptions = {
+    });
+
+    var user_email = 'phoney@mt2015.com';
+    var mailOptions = {
         from: 'phoney_store@bogus.com',
         to: user_email,
         subject: 'Your phoney invoice',
         html: invoice_str
-      };
-    
-      transporter.sendMail(mailOptions, function(error, info){
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-          invoice_str += '<br>There was an error and your invoice could not be emailed :(';
+            invoice_str += '<br>There was an error and your invoice could not be emailed :(';
         } else {
-          invoice_str += `<br>Your invoice was mailed to ${user_email}`;
+            invoice_str += `<br>Your invoice was mailed to ${user_email}`;
         }
         response.send(invoice_str);
-      });
-     
     });
+
+});
 
 app.get("/logout", function (request, response) {
     session.destroy();
@@ -316,7 +316,7 @@ app.post("/login", function (request, response) {
             var minutes = 30;
             date.setTime(date.getTime() + (minutes * 60 * 1000)); // expires in 30 minutes 
             // create username cookie 
-            response.cookie('username', login_username,{ expires: date });
+            response.cookie('username', login_username, { expires: date });
             console.log(request.cookies);
 
             // go back to the products display page 
@@ -366,6 +366,11 @@ function generate_login_page(params, form_data = {}) {
             }
         </style>
         <body>
+        <a href='./index.html'>Home</a>&nbsp&nbsp&nbsp;
+        <a href='./products_display.html?products_key=20%20Inch%20Hello%20Kitty'>20 Inch Hello Kitty</a>&nbsp&nbsp&nbsp;
+        <a href='./products_display.html?products_key=12%20Inch%20Hello%20Kitty'>12 Inch Hello Kitty</a>&nbsp&nbsp&nbsp;
+        <a href='./products_display.html?products_key=12%20Inch%20My%20Melody'>12 Inch My Melody</a>&nbsp&nbsp&nbsp;
+        <a href='./products_display.html?products_key=12%20Inch%20Other%20Characters'>12 Inch Other Characters</a>&nbsp&nbsp&nbsp;
         <h1> Hello Kitty Squishmallow Login</h1>
         <form action="?${params.toString()}" method="POST" name="login_form">
         <label style = "margin-right: 193px;" for="username"><strong>Username</strong></label> <br>
@@ -408,6 +413,11 @@ function generate_register_page(params, form_data = {}) {
         color: red;
     }
     </style>
+    <a href='./index.html'>Home</a>&nbsp&nbsp&nbsp;
+    <a href='./products_display.html?products_key=20%20Inch%20Hello%20Kitty'>20 Inch Hello Kitty</a>&nbsp&nbsp&nbsp;
+    <a href='./products_display.html?products_key=12%20Inch%20Hello%20Kitty'>12 Inch Hello Kitty</a>&nbsp&nbsp&nbsp;
+    <a href='./products_display.html?products_key=12%20Inch%20My%20Melody'>12 Inch My Melody</a>&nbsp&nbsp&nbsp;
+    <a href='./products_display.html?products_key=12%20Inch%20Other%20Characters'>12 Inch Other Characters</a>&nbsp&nbsp&nbsp;
     <body>
     <h1> Create Your Hello Kitty Squishmallow Account</h1>
     <form action="?${params.toString()}" method="POST" name="register">

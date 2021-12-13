@@ -42,26 +42,14 @@
   document.write(`<a href='./index.html'>Home</a>&nbsp&nbsp&nbsp;`);
   nav_bar(this_product_key, products_data);
 
-
-  /*for (let i in type) {
-    products = products_data[type[i]]; // get the particular products to display
-    console.log(type[i]);
-  }
-  */
-
-  /*for (let type in products_data){
-    products = products_data[type];
-  }
-  */
-
-  function update_cart(type, prod_index){
-    console.log(type,prod_index,document.getElementById(`quantity_${type}_${prod_index}`).value);
+  function update_cart(type, prod_index) {
+    console.log(type, prod_index, document.getElementById(`quantity_${type}_${prod_index}`).value);
     loadJSON(`update_cart?type=${type}&prod_index=${prod_index}&update_quantity=${document.getElementById(`quantity_${type}_${prod_index}`).value}`, function (response) {
-    // Parsing JSON string into object
-    document.getElementById(`update_button_${type}_${prod_index}`).disabled = true;
-    // add an alert 
-    shopping_cart = JSON.parse(response); // returns the new cart
-  });
+      // Parsing JSON string into object
+      document.getElementById(`update_button_${type}_${prod_index}`).disabled = true;
+      // add an alert 
+      shopping_cart = JSON.parse(response); // returns the new cart
+    });
   }
 
   function display_invoice_table_rows() {

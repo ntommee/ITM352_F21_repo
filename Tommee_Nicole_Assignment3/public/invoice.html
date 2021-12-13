@@ -6,7 +6,6 @@
   -->
 <!DOCTYPE html>
 <html lang="en">
-<script src="./product_data.js" type="text/javascript"></script>
 <script src="./functions.js"></script>
 
 <script>
@@ -15,48 +14,57 @@
   * get the full name & email from the session to personalize this page with the user's information.
   */
 
-// if you aren't logged in you shouldn't be able to access this page
-if (getCookie("username") == ''){
-location.href = "./login";
-}
-
-
-  var products_data;
-  loadJSON('get_products_data', function (response) {
-    // Parsing JSON string into object
-    products_data = JSON.parse(response);
-  });
+  // if you aren't logged in you shouldn't be able to access this page
+  if (getCookie("username") == '') {
+    window.alert("Plese login before accessing your invoice.")
+    location.href = "./login";
+  }
 
   loadJSON(`get_user_info?username=${getCookie('username')}`, function (response) {
     // Parsing JSON string into object
     user_info = JSON.parse(response); // user info object that has full name & email (not password bc we deleted)
   });
 
+  // Referenced code from Assignment 3 examples
+  var products_data;
+  var total = 0;
+  loadJSON('get_products_data', function (response) {
+    // Parsing JSON string into object
+    products_data = JSON.parse(response);
+  });
 
-  products = products_data[products_key]; // get the particular products to display
+  loadJSON('get_cart', function (response) {
+    // Parsing JSON string into object
+    shopping_cart = JSON.parse(response); // this is request.session.cart
+    for (pk in shopping_cart) {
+      total += shopping_cart[pk].reduce((a, b) => a + b);
+    }
+  });
 
   function display_invoice_table_rows() {
     subtotal = 0;
     str = '';
-    for (i = 0; i < products.length; i++) {
-      a_qty = 0;
-      // if the quantity is valid, store the quantity in a_qty
-      if (typeof params.get(`quantity${i}`) != 'undefined') {
-        a_qty = params.get(`quantity${i}`);
-      }
-      // if the quantity is greater than 0, carry out calculations for extended price & subtotal
-      if (a_qty > 0) {
-        // product row
-        extended_price = a_qty * products[i].price
-        subtotal += extended_price;
-        str += (`
+    for (let type in shopping_cart) {
+      for (let i in shopping_cart[type]) {
+        a_qty = 0;
+        // if the quantity is valid, store the quantity in a_qty ->> fix this: there are no params! must get quantity from session cart
+        if (typeof shopping_cart[type][i] != 'undefined') {
+          a_qty = shopping_cart[type][i];
+        }
+        // if the quantity is greater than 0, carry out calculations for extended price & subtotal
+        if (a_qty > 0) {
+          // product row
+          extended_price = a_qty * products_data[type][i].price
+          subtotal += extended_price;
+          str += (`
           <tr>
-            <td><img src="./images/${products[i].image}" width="100"></td>
-            <td width="43%">${products[i].name}
+            <td><img src="./images/${products_data[type][i].image}" width="100"></td>
+            <td width="43%">${products_data[type][i].name}
             <td align="center" width="11%">${a_qty}</td>
             <td width="54%">\$${extended_price.toFixed(2)}</td>
           </tr>
           `);
+        }
       }
     }
     // Compute tax
@@ -84,8 +92,6 @@ location.href = "./login";
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Invoice</title>
-  <link rel="stylesheet" href="styles.css">
-
 </head>
 
 <body>
@@ -94,7 +100,7 @@ location.href = "./login";
   <h2>Thank you for your purchase,
     <script>
       // change this! no params; get the fullname from the session
-      document.write(fullname + "!");
+      document.write(user_info.fullname + "!");
     </script>
     <br>
   </h2>
@@ -148,7 +154,7 @@ location.href = "./login";
 
       <script>
         // also change this! no params; get the email from the session
-        document.write(email);
+        document.write(user_info.email);
       </script>
     </strong>
   </p>
