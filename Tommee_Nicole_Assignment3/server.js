@@ -160,22 +160,43 @@ if (fs.existsSync(filename)) {
     console.log(`Hey! ${filename} does not exist!`);
 }
 
-
 // Referenced Assignment 3 Examples
 app.get("/checkout", function (request, response) {
     // Generate HTML invoice string
-    var invoice_str = `Thank you for your order!<table border><th>Quantity</th><th>Item</th>`;
-    var shopping_cart = request.session.cart;
-    for (product_key in products_data) {
-        for (i = 0; i < products_data[product_key].length; i++) {
-            if (typeof shopping_cart[product_key] == 'undefined') continue;
-            qty = shopping_cart[product_key][i];
-            if (qty > 0) {
-                invoice_str += `<tr><td>${qty}</td><td>${products_data[product_key][i].name}</td><tr>`;
-            }
-        }
-    }
-    invoice_str += '</table>';
+    var invoice_str = `Thank you for your purhcase${users_reg_data[username].fullname}!
+    <img src="./images/hkwaving.gif" style="width:50%">
+    <table border="2">
+    <tbody>
+      <tr style="background-color: palevioletred">
+        <th style="text-align: center;" width="43%">Product Image</th>
+        <th style="text-align: center;" width="11%">Product Name</th>
+        <th style="text-align: center;" width="13%">Quantity</th>
+        <th style="text-align: center;" width="54%">Extended Price</th>
+      </tr>
+      display_invoice_table_rows();
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="2">Sub-total</td>
+        <td width="54%">$
+          ${subtotal.toFixed(2)}
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+				<td colspan="2">Tax @ ${(100 * tax_rate)}%</td>
+        <td width="54%">$${tax.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"> Shipping </td>       
+        <td width="54%">\$${shipping.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td colspan="2"><strong><span style= "color:green; font-size:20px" >Total</span></strong></td>        
+        <td width="65%"><strong><span style="color:green; font-size:20px">\$${total.toFixed(2)}</span></strong></td>
+      </tr>`
+
     // Set up mail server. Only will work on UH Network due to security restrictions
     var transporter = nodemailer.createTransport({
         host: "mail.hawaii.edu",
@@ -187,7 +208,7 @@ app.get("/checkout", function (request, response) {
         }
     });
 
-    var user_email = 'phoney@mt2015.com';
+    var user_email = users_reg_data[username].email;
     var mailOptions = {
         from: 'phoney_store@bogus.com',
         to: user_email,
@@ -206,9 +227,6 @@ app.get("/checkout", function (request, response) {
 
 });
 
-app.get("/logout", function (request, response) {
-    session.destroy();
-});
 
 app.get("/register", function (request, response) {
     let params = new URLSearchParams(request.query);
@@ -476,5 +494,50 @@ function generate_register_page(params, form_data = {}) {
     </body>
     `;
     return str;
+}
+
+function display_invoice_table_rows() {
+    subtotal = 0;
+    str = '';
+    for (let type in shopping_cart) {
+        for (let i in shopping_cart[type]) {
+            a_qty = 0;
+            // if the quantity is valid, store the quantity in a_qty ->> fix this: there are no params! must get quantity from session cart
+            if (typeof shopping_cart[type][i] != 'undefined') {
+                a_qty = shopping_cart[type][i];
+            }
+            // if the quantity is greater than 0, carry out calculations for extended price & subtotal
+            if (a_qty > 0) {
+                // product row
+                extended_price = a_qty * products_data[type][i].price
+                subtotal += extended_price;
+                str += (`
+          <tr>
+            <td><img src="./images/${products_data[type][i].image}" width="100"></td>
+            <td width="43%">${products_data[type][i].name}
+            <td align="center" width="11%">${a_qty}</td>
+            <td width="54%">\$${extended_price.toFixed(2)}</td>
+          </tr>
+          `);
+            }
+        }
+    }
+    // Compute tax
+    tax_rate = 0.04;
+    tax = tax_rate * subtotal;
+
+    // Compute shipping
+    if (subtotal <= 45) {
+        shipping = 10;
+    } else if (subtotal <= 100) {
+        shipping = 15;
+    } else {
+        shipping = 0.07 * subtotal; // 7% of subtotal
+    }
+
+    // Compute grand total
+    total = subtotal + tax + shipping;
+
+    document.write(str);
 }
 
