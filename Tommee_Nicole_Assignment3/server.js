@@ -51,11 +51,13 @@ app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
 
+
+
 // make one that gets all user info but password
 app.post("/get_user_info", function (request, response) {
     let username = request.query.username;
     let user_info = users_reg_data[username];
-    // request.session[user_info] = delete user_info['password'];
+    delete user_info['password'];
     response.json(user_info);
 });
 

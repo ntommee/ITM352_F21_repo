@@ -25,6 +25,7 @@
     user_info = JSON.parse(response); // user info object that has full name & email (not password bc we deleted)
   });
 
+
   // Referenced code from Assignment 3 examples
   var products_data;
   var total = 0;
@@ -40,6 +41,7 @@
       total += shopping_cart[pk].reduce((a, b) => a + b);
     }
   });
+
 
   function display_invoice_table_rows() {
     subtotal = 0;

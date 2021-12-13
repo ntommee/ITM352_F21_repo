@@ -110,12 +110,6 @@
         <script>
           document.write(`<a href='./index.html'>Home</a>&nbsp&nbsp&nbsp;`);
           nav_bar(products_key, products_data);
-
-          /* Need the logout text to also function as a logout so the href will have to change too. 
-          * Clicking logout will clear the username cookie
-          * document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          */
-
           // if there is a username in the cookie, display "logout *username*"
           if (getCookie('username') != '') {
             login.innerHTML = `<a onclick='document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";' href='';style="margin-left: 30px;">Logout ${getCookie('username')}</a> `;
