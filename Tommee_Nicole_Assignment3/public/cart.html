@@ -47,6 +47,7 @@
     loadJSON(`update_cart?type=${type}&prod_index=${prod_index}&update_quantity=${document.getElementById(`quantity_${type}_${prod_index}`).value}`, function (response) {
       // Parsing JSON string into object
       document.getElementById(`update_button_${type}_${prod_index}`).disabled = true;
+      location.reload();
       // add an alert 
       shopping_cart = JSON.parse(response); // returns the new cart
     });

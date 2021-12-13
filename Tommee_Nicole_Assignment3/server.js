@@ -51,7 +51,9 @@ app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
 
-
+app.post("/clear_cart", function (request, response) {
+    request.session.destroy();
+});
 
 // make one that gets all user info but password
 app.post("/get_user_info", function (request, response) {

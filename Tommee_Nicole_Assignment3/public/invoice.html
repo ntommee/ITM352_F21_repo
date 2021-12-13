@@ -9,7 +9,17 @@
 <script src="./functions.js"></script>
 
 <script>
-  // when this page loads, destroy the session
+  // when this page is requested, destroy the session
+  loadJSON('clear_cart', function (response) {
+    
+  });
+
+
+  loadJSON(`get_user_info?username=${getCookie('username')}`, function (response) {
+    // Parsing JSON string into object
+    user_info = JSON.parse(response); // user info object that has full name & email (not password bc we deleted)
+  });
+
 
   // if you aren't logged in you shouldn't be able to access this page
   if (getCookie("username") == '') {
@@ -21,7 +31,6 @@
     // Parsing JSON string into object
     user_info = JSON.parse(response); // user info object that has full name & email (not password bc we deleted)
   });
-
 
   // Referenced code from Assignment 3 examples
   var products_data;
@@ -38,7 +47,6 @@
       total += shopping_cart[pk].reduce((a, b) => a + b);
     }
   });
-
 
   function display_invoice_table_rows() {
     subtotal = 0;
