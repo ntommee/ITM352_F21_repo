@@ -10,10 +10,6 @@
 
 <script>
   // when this page is requested, destroy the session
-  loadJSON('clear_cart', function (response) {
-    
-  });
-
 
   loadJSON(`get_user_info?username=${getCookie('username')}`, function (response) {
     // Parsing JSON string into object

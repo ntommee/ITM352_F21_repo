@@ -8,10 +8,5 @@
         "email": "ntommee@hawaii.edu",
         "password": "nicole",
         "fullname": "Nicole Tommee"
-    },
-    "testing": {
-        "password": "testing",
-        "email": "test@gmail.com",
-        "fullname": "New User"
     }
 }

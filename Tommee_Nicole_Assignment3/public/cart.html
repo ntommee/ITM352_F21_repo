@@ -76,7 +76,7 @@
             }" onchange = "document.getElementById('update_button_${type}_${i}').disabled = false;"
             ></td>
             <td width="54%">\$${extended_price.toFixed(2)}</td>
-            <td><input disabled type = "button" id="update_button_${type}_${i}" value = "update" onclick="update_cart('${type}','${i}')"></td> 
+            <td><input disabled type = "button" style="background-color: palevioletred; border-radius: 8px; font-family: 'Montserrat', sans-serif" id="update_button_${type}_${i}" value = "update" onclick="update_cart('${type}','${i}')"></td> 
           </tr>
           `);
         }

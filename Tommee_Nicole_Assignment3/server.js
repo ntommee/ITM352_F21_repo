@@ -283,10 +283,15 @@ app.post("/register", function (request, response) {
         users_reg_data[username].fullname = request.body['fullname'];
         // write the info to the JSON file
         fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
+        var date = new Date();
+        var minutes = 30;
+        date.setTime(date.getTime() + (minutes * 60 * 1000)); // expires in 30 minutes 
+        // create username cookie 
+        response.cookie('username', request.body.username, { expires: date });
+        console.log(request.cookies);
         // redirect to login page
-        response.redirect('./login?' + params.toString());
+        response.redirect(`./products_display.html?products_key=${"20 Inch Hello Kitty"}` + params.toString());
         return;
-        console.log("successfully registered") + params.toString();
     } else { // regenerate the register page with sticky form 
         var str = generate_register_page(params, { "username": username, "fullname": request.body.fullname, "email": request.body.email });
         response.send(str);
