@@ -12,9 +12,14 @@
 <script>
   /* this page will essentially be the same as cart.html but can't edit the quantities.
   * Get the cart from the session to get the product information
-  * if you aren't logged in you shouldn't be able to access this page
   * get the full name & email from the session to personalize this page with the user's information.
   */
+
+// if you aren't logged in you shouldn't be able to access this page
+if (getCookie("username") == ''){
+location.href = "./login";
+}
+
 
   var products_data;
   loadJSON('get_products_data', function (response) {
@@ -22,16 +27,11 @@
     products_data = JSON.parse(response);
   });
 
-  loadJSON('get_email', function (response) {
+  loadJSON(`get_user_info?username=${getCookie('username')}`, function (response) {
     // Parsing JSON string into object
-    email = JSON.parse(response); // same as request.session['email']
+    user_info = JSON.parse(response); // user info object that has full name & email (not password bc we deleted)
   });
 
-  loadJSON('get_fullname', function (response) {
-    // Parsing JSON string into object
-    fullname = JSON.parse(response); // same as request.session['fullname']
-  });
-  
 
   products = products_data[products_key]; // get the particular products to display
 

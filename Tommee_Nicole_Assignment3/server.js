@@ -47,21 +47,27 @@ app.post("/get_products_data", function (request, response) {
     response.json(products_data);
 });
 
-app.post("/get_products_key", function (request, response) {
-    response.json(request.session['type']);
-});
-
 app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
 
-app.post("/get_email", function (request, response) {
-    response.json(request.session['email']);
+// make one that gets all user info but password
+app.post("/get_user_info", function (request, response) {
+    let username = request.query.username;
+    let user_info = users_reg_data[username];
+    delete user_info['password'];
+    response.json(user_info);
 });
 
-app.post("/get_fullname", function (request, response) {
-    response.json(request.session['fullname']);
+// microservice to update the shopping cart 
+app.post("/update_cart", function (request, response) {
+    let type = request.query.type;
+    let prod_index = request.query.prod_index;
+    let update_quantity = request.query.update_quantity;
+    request.session.cart[type][prod_index] = Number(update_quantity);
+    response.json(request.session.cart); // wouldn't be successful if request more than avail
 });
+
 
 // routing
 app.get("/product_data.js", function (request, response, next) {

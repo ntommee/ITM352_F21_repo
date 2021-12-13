@@ -6,7 +6,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<script src="./product_data.js" type="text/javascript"></script>
 <script src="./functions.js"></script>
 
 <script>
@@ -33,11 +32,6 @@
     }
   });
 
-  loadJSON('get_products_key', function (response) {
-    // Parsing JSON string into object
-    type = JSON.parse(response); // this is request.session['type']
-  });
-
   // get the query string
   let params = (new URL(document.location)).searchParams;
   if (params.has('products_key')) {
@@ -60,30 +54,43 @@
   }
   */
 
-  products = products_data[type[0]];
+  function update_cart(type, prod_index){
+    console.log(type,prod_index,document.getElementById(`quantity_${type}_${prod_index}`).value);
+    loadJSON(`update_cart?type=${type}&prod_index=${prod_index}&update_quantity=${document.getElementById(`quantity_${type}_${prod_index}`).value}`, function (response) {
+    // Parsing JSON string into object
+    document.getElementById(`update_button_${type}_${prod_index}`).disabled = true;
+    // add an alert 
+    shopping_cart = JSON.parse(response); // returns the new cart
+  });
+  }
 
   function display_invoice_table_rows() {
     subtotal = 0;
     str = '';
-    for (let i in products) {
-      a_qty = 0;
-      // if the quantity is valid, store the quantity in a_qty ->> fix this: there are no params! must get quantity from session cart
-      if (typeof shopping_cart[type[i]] != 'undefined') {
-        a_qty = shopping_cart[type[i]][i];
-      }
-      // if the quantity is greater than 0, carry out calculations for extended price & subtotal
-      if (a_qty > 0) {
-        // product row
-        extended_price = a_qty * products[i].price
-        subtotal += extended_price;
-        str += (`
+    for (let type in shopping_cart) {
+      for (let i in shopping_cart[type]) {
+        a_qty = 0;
+        // if the quantity is valid, store the quantity in a_qty ->> fix this: there are no params! must get quantity from session cart
+        if (typeof shopping_cart[type][i] != 'undefined') {
+          a_qty = shopping_cart[type][i];
+        }
+        // if the quantity is greater than 0, carry out calculations for extended price & subtotal
+        if (a_qty > 0) {
+          // product row
+          extended_price = a_qty * products_data[type][i].price
+          subtotal += extended_price;
+          str += (`
           <tr>
-            <td><img src="./images/${products[i].image}" width="100"></td>
-            <td width="43%">${products[i].name}
-            <td align="center" width="11%">${a_qty}</td>
+            <td><img src="./images/${products_data[type][i].image}" width="100"></td>
+            <td width="43%">${products_data[type][i].name}
+            <td align="center" width="11%"><input type = "number" id="quantity_${type}_${i}" value="${a_qty}" min="0" max="${products_data[type][i].quantity_available
+            }" onchange = "document.getElementById('update_button_${type}_${i}').disabled = false;"
+            ></td>
             <td width="54%">\$${extended_price.toFixed(2)}</td>
+            <td><input disabled type = "button" id="update_button_${type}_${i}" value = "update" onclick="update_cart('${type}','${i}')"></td> 
           </tr>
           `);
+        }
       }
     }
     // Compute tax

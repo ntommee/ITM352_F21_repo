@@ -105,7 +105,7 @@
   <!-- Header -->
   <div class="w3-top">
     <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-      <div class="w3-padding-16 w3-left"><a href='./login' style="margin-left: 30px;"><span id="login"></span></a>
+      <div class="w3-padding-16 w3-left"><span id="login"><a href='./login' style="margin-left: 30px;">login</a></span>
       </div>
       <div class="w3-right w3-padding-16"><a href=cart.html style="margin-right:30px;">View Cart</a></div>
       <h5 style="font-size: 12px; text-align: right; margin-top: 20px;">You have <span id="cart_total">0</span> items in
@@ -132,11 +132,10 @@
           * Clicking logout will clear the username cookie
           * document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           */
+
           // if there is a username in the cookie, display "logout *username*"
-          if (document.cookie.indexOf('username') >= 0) {
-            login.innerHTML = `Logout ${getCookie('username')}`;
-          } else { // else if not logged in, display "login"
-            login.innerHTML = "Login";
+          if (getCookie('username') != '') {
+            login.innerHTML = `<a onclick='document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";' href='';style="margin-left: 30px;">Logout ${getCookie('username')}</a> `;
           }
           console.log(getCookie('username'));
         </script>
