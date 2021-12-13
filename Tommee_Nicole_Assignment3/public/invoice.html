@@ -9,6 +9,8 @@
 <script src="./functions.js"></script>
 
 <script>
+
+
   // when this page is requested, destroy the session
 
   loadJSON(`get_user_info?username=${getCookie('username')}`, function (response) {
@@ -50,7 +52,7 @@
     for (let type in shopping_cart) {
       for (let i in shopping_cart[type]) {
         a_qty = 0;
-        // if the quantity is valid, store the quantity in a_qty ->> fix this: there are no params! must get quantity from session cart
+        // if the quantity is valid, store the quantity in a_qty
         if (typeof shopping_cart[type][i] != 'undefined') {
           a_qty = shopping_cart[type][i];
         }
@@ -149,6 +151,7 @@
       </script>
     </tbody>
   </table>
+
   <br>
   <br>
   <p>
