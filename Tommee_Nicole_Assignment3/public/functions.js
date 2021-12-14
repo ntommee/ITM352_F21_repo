@@ -30,7 +30,7 @@ function nav_bar(this_product_key, products_data) {
 
 }
 
-  // code from https://www.w3schools.com/js/js_cookies.asp
+  // Referenced code from https://www.w3schools.com/js/js_cookies.asp
   function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);

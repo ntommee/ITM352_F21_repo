@@ -1,7 +1,7 @@
 /* 
-* Nicole Tommee
-* Displays product data, validates the input, & then validates login information, and presents user a personalized invoice.
-* Used code from Lab13 Ex4, Lab 14 Ex4, Assignment1_MVC_server, and Assignemnt 3 Examples for guidance
+* Author: Nicole Tommee
+* Server for displaying product data, validating input and login information, and presents user a personalized invoice & email.
+* Used code from Lab13 Ex4, Lab 14 Ex4, Assignment1_MVC_server, and Assignment 3 Examples for guidance
 */
 var users_reg_data;
 var express = require('express');
@@ -9,8 +9,6 @@ var app = express();
 var fs = require('fs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
-// console.log("here");
-
 var nodemailer = require('nodemailer');
 
 var filename = __dirname + '/user_data.json';
@@ -54,19 +52,17 @@ app.all('*', function (request, response, next) {
     next();
 });
 
+// microservice to load product information
 app.post("/get_products_data", function (request, response) {
     response.json(products_data);
 });
 
+// microservice to retrive the shopping cart 
 app.post("/get_cart", function (request, response) {
     response.json(request.session.cart);
 });
 
-app.post("/clear_cart", function (request, response) {
-    request.session.destroy();
-});
-
-// make one that gets all user info but password
+// gets all the user info except for the password
 app.post("/get_user_info", function (request, response) {
     let username = request.query.username;
     let user_info = users_reg_data[username];
