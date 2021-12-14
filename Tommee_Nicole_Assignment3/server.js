@@ -87,7 +87,7 @@ app.get("/product_data.js", function (request, response, next) {
     response.send(products_str);
 });
 
-
+// takes the information from the products_display page and validates it before adding to the cart
 app.post("/add_to_cart", function (request, response, next) {
     let POST = request.body;
     var products_key = request.body['products_key']; // get the product key sent from the form post
@@ -130,13 +130,13 @@ app.post("/add_to_cart", function (request, response, next) {
             request.session.cart = {}; // creates a new cart if there isn't already one 
         }
         if (typeof request.session['type'] == 'undefined') {
-            request.session['type'] = []
+            request.session['type'] = [] // creates a new type array if there isn't already one 
         }
 
         if (request.session['type'].indexOf(products_key) == -1) {
             request.session['type'].push(products_key);
         }
-
+        // loops through the cart
         for (let i in products_data[products_key]) {
             if (typeof request.session.cart[products_key] == 'undefined') {
                 request.session.cart[products_key] = []; // adds the product key to the cart if there isn't already one
@@ -186,16 +186,25 @@ app.post("/confirm_purchase", function (request, response) {
         response.redirect(`./cart.html?${params.toString()}`);
         console.log(errorMessage_str);
         return;
+    } else {
+        for (let type in request.session.cart) {
+            for (let i in request.session.cart[type]) {
+                products_data[type][i].quantity_available -= request.session.cart[type][i];
+            }
+        }
     }
 
-    // if quantities are available, email an invoice, destroy the session, and display final invoice 
-    // check if user is logged in, if not send them to the login page
-    if (typeof request.cookies['username'] == 'undefined') {
-        response.redirect("./login");
-        return;
-    }
-    var username = request.cookies["username"];
-    var str = `
+
+
+
+        // if quantities are available, email an invoice, destroy the session, and display final invoice 
+        // check if user is logged in, if not send them to the login page
+        if (typeof request.cookies['username'] == 'undefined') {
+            response.redirect("./login");
+            return;
+        }
+        var username = request.cookies["username"];
+        var str = `
     <link rel="stylesheet" href="invoice.css">
     Thank you for your purchase, ${users_reg_data[username].fullname}!
     <img src="./images/hkwaving.gif" style="width:50%">
@@ -207,20 +216,21 @@ app.post("/confirm_purchase", function (request, response) {
         <th style="text-align: center;" width="13%">Quantity</th>
         <th style="text-align: center;" width="54%">Extended Price</th>
       </tr>`;
-    subtotal = 0;
-    for (let type in request.session.cart) {
-        for (let i in request.session.cart[type]) {
-            a_qty = 0;
-            // if the quantity is valid, store the quantity in a_qty
-            if (typeof request.session.cart[type][i] != 'undefined') {
-                a_qty = request.session.cart[type][i];
-            }
-            // if the quantity is greater than 0, carry out calculations for extended price & subtotal
-            if (a_qty > 0) {
-                // product row
-                extended_price = a_qty * products_data[type][i].price
-                subtotal += extended_price;
-                str += (`
+        subtotal = 0;
+        // loops through the cart
+        for (let type in request.session.cart) {
+            for (let i in request.session.cart[type]) {
+                a_qty = 0;
+                // if the quantity is valid, store the quantity in a_qty
+                if (typeof request.session.cart[type][i] != 'undefined') {
+                    a_qty = request.session.cart[type][i];
+                }
+                // if the quantity is greater than 0, carry out calculations for extended price & subtotal
+                if (a_qty > 0) {
+                    // product row
+                    extended_price = a_qty * products_data[type][i].price
+                    subtotal += extended_price;
+                    str += (`
           <tr>
             <td><img src="./images/${products_data[type][i].image}" width="100"></td>
             <td width="43%">${products_data[type][i].name}
@@ -228,26 +238,26 @@ app.post("/confirm_purchase", function (request, response) {
             <td width="54%">\$${extended_price.toFixed(2)}</td>
           </tr>
           `);
+                }
             }
         }
-    }
-    // Compute tax
-    tax_rate = 0.04;
-    tax = tax_rate * subtotal;
+        // Compute tax
+        tax_rate = 0.04;
+        tax = tax_rate * subtotal;
 
-    // Compute shipping
-    if (subtotal <= 45) {
-        shipping = 10;
-    } else if (subtotal <= 100) {
-        shipping = 15;
-    } else {
-        shipping = 0.07 * subtotal; // 7% of subtotal
-    }
+        // Compute shipping
+        if (subtotal <= 45) {
+            shipping = 10;
+        } else if (subtotal <= 100) {
+            shipping = 15;
+        } else {
+            shipping = 0.07 * subtotal; // 7% of subtotal
+        }
 
-    // Compute grand total
-    total = subtotal + tax + shipping;
+        // Compute grand total
+        total = subtotal + tax + shipping;
 
-    str += `<tr>
+        str += `<tr>
         <td>&nbsp;</td>
         <td colspan="2">Sub-total</td>
         <td width="54%">$
@@ -271,46 +281,46 @@ app.post("/confirm_purchase", function (request, response) {
       </tr></table>
       `;
 
-    var redirect_to_home =
-        `  
+        var redirect_to_home =
+            `  
     <form action="./index.html">
       <input type="submit" value="Return to Home Page" name="home_button"
         style="margin:0px auto; display:block; background-color: palevioletred; border-radius: 8px; font-family: 'Montserrat', sans-serif">
     </form>`;
 
-    // Set up mail server. Only will work on UH Network due to security restrictions
-    var transporter = nodemailer.createTransport({
-        host: "mail.hawaii.edu",
-        port: 25,
-        secure: false, // use TLS
-        tls: {
-            // do not fail on invalid certs
-            rejectUnauthorized: false
-        }
+        // Set up mail server. Only will work on UH Network due to security restrictions
+        var transporter = nodemailer.createTransport({
+            host: "mail.hawaii.edu",
+            port: 25,
+            secure: false, // use TLS
+            tls: {
+                // do not fail on invalid certs
+                rejectUnauthorized: false
+            }
+        });
+
+        var user_email = users_reg_data[username].email;
+        var mailOptions = {
+            from: 'phoney_store@bogus.com',
+            to: user_email,
+            subject: 'Your phoney invoice',
+            html: str
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                str += '<br>An error has occured and your invoice could not be emailed. <br><br><br>';
+            } else {
+                str += `<br>Your invoice was mailed to ${user_email} <br><br><br>`;
+            }
+            // destroy the session & send the invoice to the browser
+            request.session.destroy();
+            response.send(str + redirect_to_home);
+        });
+
+
+
     });
-
-    var user_email = users_reg_data[username].email;
-    var mailOptions = {
-        from: 'phoney_store@bogus.com',
-        to: user_email,
-        subject: 'Your phoney invoice',
-        html: str
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            str += '<br>An error has occured and your invoice could not be emailed. <br><br><br>';
-        } else {
-            str += `<br>Your invoice was mailed to ${user_email} <br><br><br>`;
-        }
-        // destroy the session & send the invoice to the browser
-        request.session.destroy();
-        response.send(str + redirect_to_home);
-    });
-
-
-
-});
 
 
 app.get("/register", function (request, response) {

@@ -1,12 +1,1 @@
-{
-    "itm352": {
-        "email": "itm352@hawaii.edu",
-        "password": "grader",
-        "fullname": "ITM 352"
-    },
-    "nicole": {
-        "email": "ntommee@hawaii.edu",
-        "password": "nicole",
-        "fullname": "Nicole Tommee"
-    }
-}
+{"itm352":{"email":"itm352@hawaii.edu","password":"grader","fullname":"ITM 352"},"nicole":{"email":"ntommee@hawaii.edu","password":"nicole","fullname":"Nicole Tommee"},"testing":{"password":"nicole","email":"test@gmail.com","fullname":"Test User"}}
