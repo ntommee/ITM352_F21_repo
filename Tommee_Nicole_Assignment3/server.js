@@ -169,29 +169,26 @@ app.post("/confirm_purchase", function (request, response) {
     for (let type in request.session.cart) {
         for (let i in request.session.cart[type]) {
             if (request.session.cart[type][i] > products_data[type][i].quantity_available) {
-                errors['quantity' + i] = `${request.session.cart[type][i]} items are not available for ${products_data[type][i].name}`;
+                errors['notAvailable_' + type + '_' + i] = `${request.session.cart[type][i]} items are not available for ${products_data[type][i].name}`;
             }
         }
     }
-    // if errors
+    // if there are no items in the cart, don't let the user submit order
+    if (typeof request.session.cart == 'undefined' || Object.keys(request.session.cart).length == 0) {
+        errors['cart_empty'] = 'Your cart is empty. Please enter some quantities before checking out.';
+    }
+
+    // if there are errors, send the user back to the cart with the error string
     if (Object.keys(errors).length > 0) {
         var errorMessage_str = '';
         for (err in errors) {
             errorMessage_str += errors[err] + '\n';
         }
         // go back to the cart 
-        response.redirect("./cart.html")
-        // eventually want to display errorMessage_str on the cart.html page as an alert 
+        let params = new URLSearchParams(errors);
+        params.append('errorMessage', errorMessage_str);
+        response.redirect(`./cart.html?${params.toString()}`);
         console.log(errorMessage_str);
-        return;
-    }
-
-    // if there are no items in the cart, don't let the user submit order
-    if (request.session.cart == '') {
-        // go back to the products_display & tell user to purchase some items before checking out
-        response.redirect("./products_display.html?products_key=20%20Inch%20Hello%20Kitty'")
-        // eventually want to display empty_error_str on the cart.html page as an alert
-        var empty_error_str = 'Your cart is empty. Please enter some quantities before checking out';
         return;
     }
 

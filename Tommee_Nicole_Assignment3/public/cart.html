@@ -9,8 +9,15 @@
 <script src="./functions.js"></script>
 
 <script>
-
-
+ let params = (new URL(document.location)).searchParams;
+  window.onload = () => {
+    if ((params.has('errorMessage'))) {
+      alert(params.get("errorMessage"));
+    }
+  }
+  if (params.has('products_key')) {
+    var this_product_key = params.get('products_key');
+  }
   // make it so that if you don't have any items in cart, you cannot access this page
   // allow users to edit the quantity information on this page
   // before submitting, double check if the quantity is available.
@@ -32,12 +39,6 @@
       total += shopping_cart[pk].reduce((a, b) => a + b);
     }
   });
-
-  // get the query string
-  let params = (new URL(document.location)).searchParams;
-  if (params.has('products_key')) {
-    var this_product_key = params.get('products_key');
-  }
 
   // navigation bar
   document.write(`<a href='./index.html'>Home</a>&nbsp&nbsp&nbsp;`);
