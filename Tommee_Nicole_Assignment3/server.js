@@ -7,7 +7,6 @@ var users_reg_data;
 var express = require('express');
 var app = express();
 var fs = require('fs');
-const QueryString = require('qs');
 var errors = {}; // keep errors on server to share with registration page
 var loginerrors = {} // keep errors on server to share with login page
 // console.log("here");
@@ -166,13 +165,34 @@ app.post("/add_to_cart", function (request, response, next) {
 app.post("/confirm_purchase", function (request, response) {
     // Validate that item quantities are still available
     // If not, send user back to the cart and tell them the quantities are no longer available
-    // You could modify cart to be set to quantity available. Tell user the amount was adjusted to what is available
     var errors = {}; //assume no errors to start
-
+    for (let type in request.session.cart) {
+        for (let i in request.session.cart[type]) {
+            if (request.session.cart[type][i] > products_data[type][i].quantity_available) {
+                errors['quantity' + i] = `${request.session.cart[type][i]} items are not available for ${products_data[type][i].name}`;
+            }
+        }
+    }
     // if errors
     if (Object.keys(errors).length > 0) {
+        var errorMessage_str = '';
+        for (err in errors) {
+            errorMessage_str += errors[err] + '\n';
+        }
+        // go back to the cart 
         response.redirect("./cart.html")
-        return; // add code later 
+        // eventually want to display errorMessage_str on the cart.html page as an alert 
+        console.log(errorMessage_str);
+        return;
+    }
+
+    // if there are no items in the cart, don't let the user submit order
+    if (request.session.cart == '') {
+        // go back to the products_display & tell user to purchase some items before checking out
+        response.redirect("./products_display.html?products_key=20%20Inch%20Hello%20Kitty'")
+        // eventually want to display empty_error_str on the cart.html page as an alert
+        var empty_error_str = 'Your cart is empty. Please enter some quantities before checking out';
+        return;
     }
 
     // if quantities are available, email an invoice, destroy the session, and display final invoice 
@@ -198,7 +218,7 @@ app.post("/confirm_purchase", function (request, response) {
     for (let type in request.session.cart) {
         for (let i in request.session.cart[type]) {
             a_qty = 0;
-            // if the quantity is valid, store the quantity in a_qty ->> fix this: there are no params! must get quantity from session cart
+            // if the quantity is valid, store the quantity in a_qty
             if (typeof request.session.cart[type][i] != 'undefined') {
                 a_qty = request.session.cart[type][i];
             }
@@ -255,7 +275,15 @@ app.post("/confirm_purchase", function (request, response) {
         <td>&nbsp;</td>
         <td colspan="2"><strong><span style= "color:green; font-size:20px" >Total</span></strong></td>        
         <td width="65%"><strong><span style="color:green; font-size:20px">\$${total.toFixed(2)}</span></strong></td>
-      </tr></table>`;
+      </tr></table>
+      `;
+
+    var redirect_to_home =
+        `  
+    <form action="./index.html">
+      <input type="submit" value="Return to Home Page" name="home_button"
+        style="margin:0px auto; display:block; background-color: palevioletred; border-radius: 8px; font-family: 'Montserrat', sans-serif">
+    </form>`;
 
     // Set up mail server. Only will work on UH Network due to security restrictions
     var transporter = nodemailer.createTransport({
@@ -278,13 +306,13 @@ app.post("/confirm_purchase", function (request, response) {
 
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-            str += '<br>There was an error and your invoice could not be emailed :(';
+            str += '<br>An error has occured and your invoice could not be emailed. <br><br><br>';
         } else {
-            str += `<br>Your invoice was mailed to ${user_email}`;
+            str += `<br>Your invoice was mailed to ${user_email} <br><br><br>`;
         }
         // destroy the session & send the invoice to the browser
         request.session.destroy();
-        response.send(str);
+        response.send(str + redirect_to_home);
     });
 
 
