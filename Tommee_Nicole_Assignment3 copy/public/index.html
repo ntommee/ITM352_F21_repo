@@ -1,0 +1,44 @@
+<!-- 
+    Author: Nicole Tommee
+    Displays a home page and directs users to the products display page 
+    Referenced code from Assignment 3 examples
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+        body {
+            text-align: center;
+            background: #ffe8d2;
+            font-family: 'Montserrat', sans-serif
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Kitty Squishmallow Store Home</title>
+    <script src="./functions.js"></script>
+    <script>
+        var products_data;
+        loadJSON('get_products_data', function (response) {
+            // Parsing JSON string into object
+            products_data = JSON.parse(response);
+        });
+        var this_product_key = ''
+    </script>
+</head>
+
+<body>
+    <h1>Hello Kitty Squishmallow Store</h1>
+    What would you like to shop for: <br> <br>
+    <script> nav_bar(this_product_key, products_data);</script>
+    <br>
+    <br>
+    <img src="./images/WelcomeSign.png" height="40%" width="40%">
+</body>
+</html>

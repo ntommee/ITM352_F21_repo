@@ -1,0 +1,106 @@
+    {
+        "20 Inch Hello Kitty": [
+            {
+                "name": "20 Inch Floral",
+                "price": 40.00,
+                "image": "hk1.jpeg",
+                "quantity_available": 4
+            },
+            {
+                "name": "20 Inch Sunglasses",
+                "price": 40.00,
+                "image": "hk2.jpeg",
+                "quantity_available": 6
+            },
+            {
+                "name": "20 Inch Mermaid",
+                "price": 40.00,
+                "image": "hk3.jpeg",
+                "quantity_available": 2
+            },
+            {
+                "name": "20 Inch Scuba",
+                "price": 40.00,
+                "image": "hk4.jpeg",
+                "quantity_available": 4
+            }
+        ],
+        "12 Inch Hello Kitty": [
+            {
+                "name": "12 Inch Red",
+                "price": 22.00,
+                "image": "hk5.jpeg",
+                "quantity_available": 2
+            },
+            {
+                "name": "12 Inch Teal",
+                "price": 22.00,
+                "image": "hk6.jpeg",
+                "quantity_available": 3
+            },
+            {
+                "name": "12 Inch Pink",
+                "price": 22.00,
+                "image": "hk7.jpeg",
+                "quantity_available": 6
+            },
+            {
+                "name": "12 Inch Blue",
+                "price": 22.00,
+                "image": "hk8.jpeg",
+                "quantity_available": 2
+            }
+        ],
+        "12 Inch My Melody": [
+            {
+                "name": "Light Pink",
+                "price": 22.00,
+                "image": "MyMelody1.jpg",
+                "quantity_available": 4
+            },
+            {
+                "name": "Watermelon",
+                "price": 22.00,
+                "image": "MyMelody2.jpg",
+                "quantity_available": 6
+            },
+            {
+                "name": "Hot Pink",
+                "price": 22.00,
+                "image": "MyMelody3.jpg",
+                "quantity_available": 2
+            },
+            {
+                "name": "Baby Pink",
+                "price": 22.00,
+                "image": "MyMelody4.jpg",
+                "quantity_available": 4
+            }
+        ],
+        "12 Inch Other Characters": [
+            {
+                "name": "Pompompurin Burger",
+                "price": 22.00,
+                "image": "Other1.jpg",
+                "quantity_available": 4
+            },
+            {
+                "name": "Tuxedo Sam Ice Cream",
+                "price": 22.00,
+                "image": "Other2.jpg",
+                "quantity_available": 6
+            },
+            {
+                "name": "Pompompurin Ice Cream",
+                "price": 22.00,
+                "image": "Other3.jpg",
+                "quantity_available": 2
+            },
+            {
+                "name": "Tuxedo Sam Milk Shake",
+                "price": 22.00,
+                "image": "Other4.jpg",
+                "quantity_available": 4
+            }
+        ]
+    }

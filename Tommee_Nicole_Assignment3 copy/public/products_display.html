@@ -1,0 +1,167 @@
+<!-- Author: Nicole Tommee
+  Displays all products pages along with the quantity available and the price of each item.
+  Navigation bar at the top to allow user to navigate back and forth between pages.
+  Referenced code from Assignment 3 examples
+  Template Adapted from W3 Schools
+-->
+
+<script>
+  let params = (new URL(document.location)).searchParams;
+  window.onload = () => {
+    if ((params.has('errorMessage'))) {
+      for (i in products) {
+        // put quantity values from qstring into quantity textboxes
+        product_selection_form[`quantity${i}`].value = params.get(`quantity${i}`);
+      }
+      alert(params.get("errorMessage"));
+    }
+  }
+
+  function isNonNegInt(q, returnErrors = false) {
+    errors = []; // assume no errors at first
+    if (q == '') q = 0;
+    if (Number(q) != q) errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
+    else {
+      if (q < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
+      if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
+    }
+    return returnErrors ? errors : (errors.length == 0);
+  }
+  // modified code from Lab12 
+  function checkQuantityTextbox(theTextbox) {
+    // is the textbox value a non-negative int?
+    var errors_array = isNonNegInt(theTextbox.value, true);
+    // once the user types something in the box and it has no errors, change the message to quantity requested
+    if (errors_array.length == 0) errors_array = ['Quantity Requested:'];
+    // if nothing in box tell user to enter a quantity
+    if (theTextbox.value.trim() == '') errors_array = ['Enter a quantity'];
+    // if there are errors, display all the errors 
+    document.getElementById(theTextbox.name + '_label').innerHTML = errors_array.join(", ");
+  }
+</script>
+
+<!DOCTYPE html>
+<html>
+<title>Hello Kitty Squishmallows</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .w3-bar-block .w3-bar-item {
+    padding: 20px
+  }
+</style>
+
+<head>
+  <script src="./functions.js"></script>
+
+  <script>
+    // get the query string
+    if (params.has('products_key')) {
+      var products_key = params.get('products_key');
+    } else {
+      document.write('no products key in query string');
+      document.stop;
+    }
+    var products_data;
+    loadJSON('get_products_data', function (response) {
+      // Parsing JSON string into object
+      products_data = JSON.parse(response);
+    });
+  </script>
+</head>
+
+<body>
+  <!-- Header -->
+  <div class="w3-top">
+    <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
+      <div class="w3-padding-16 w3-left"><span id="login"><a href='./login' style="margin-left: 30px;">login</a></span>
+      </div>
+      <div class="w3-right w3-padding-16"><a href=cart.html style="margin-right:30px;">View Cart</a></div>
+      <h5 style="font-size: 12px; text-align: right; margin-top: 20px;">You have <span id="cart_total">0</span> items in
+        your shopping cart</h5>
+      <script>
+        var products_data;
+        var total = 0;
+        loadJSON('get_cart', function (response) {
+          // Parsing JSON string into object
+          shopping_cart = JSON.parse(response);
+          for (pk in shopping_cart) {
+            total += shopping_cart[pk].reduce((a, b) => a + b);
+          }
+        });
+        cart_total.innerHTML = total;
+      </script>
+      <div class="w3-center w3-padding-16">Nicole's Hello Kitty Squishmallow Store</div>
+      <div class="w3-center w3-padding-16" style="font-size: 20px; color: palevioletred;">
+        <script>
+          document.write(`<a href='./index.html'>Home</a>&nbsp&nbsp&nbsp;`);
+          nav_bar(products_key, products_data);
+          // if there is a username in the cookie, display "logout *username*"
+          if (getCookie('username') != '') {
+            login.innerHTML = `<a onclick='document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";' href='';style="margin-left: 30px;">Logout ${getCookie('username')}</a> `;
+          }
+          console.log(getCookie('username'));
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    products = products_data[products_key]; // get the particular products to display
+  </script>
+
+  <!-- Spaces out the margins of the page content -->
+  <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:170px">
+
+    <!-- displays the product listings with image, name, price, and quantity available -->
+    <!-- also displays text box for user to enter quantity & checks input -->
+    <div class="w3-row-padding w3-padding-16 w3-center">
+      <form action="/add_to_cart" name="product_selection_form" method="POST">
+        <main>
+          <script>
+            document.write(`<input type = "hidden" name="products_key" value="${products_key}">`);
+            for (i = 0; i < products.length; i++) {
+              document.write(`
+              <div class="w3-quarter">
+              <img src="./images/${products[i].image}" style="width:100%">
+              <h2>${products[i].name}</h2> 
+              <p><span>$${products[i].price} | Quantity Available: ${products[i].quantity_available} </span></p> 
+              <label id="quantity${i}_label"}"> Enter a quantity</label> 
+              <input type = "text" placeholder = "0" name="quantity${i}" maxlength="3" size="5"onkeyup = "checkQuantityTextbox(this);">              
+              </div>`);
+            }
+          </script>
+        </main>
+    </div>
+
+    <!--submit button that shows "purchase"-->
+    <br><br>
+    <input type="submit" value="Add Items to Cart" name="purchase_submit"
+      style="margin:0px auto; display:block; background-color: palevioletred; border-radius: 8px;">
+    </form>
+
+    <!-- Footer -->
+    <footer class="w3-row-padding w3-padding-32">
+      <div class="w3-third">
+        <h3>Questions?</h3>
+        <p>Contact customer service from 7AM - 6PM HST squishmallows@hellosquish.com</p>
+      </div>
+
+</body>
+
+</html>
